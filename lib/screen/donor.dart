@@ -471,12 +471,15 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
                 backgroundColor: MaterialStateProperty.all(Colors.red),
               ),
                 onPressed:() {
+                   setState(() {
                 food = false;
                 clothes = false;
                 cash = false;
                 necessities = false;
+                logistics = false;
                 summary = false;
                 clearTextField();
+                  });
   },                
                   child: const Text('Clear',
                               style: TextStyle(color: Colors.white)),

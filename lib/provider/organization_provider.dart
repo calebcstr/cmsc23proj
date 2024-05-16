@@ -1,6 +1,5 @@
 import 'package:cmsc23proj/model/org_model.dart';
 import 'package:flutter/material.dart';
-import '../model/org_model.dart';
 
 class OrganizationList with ChangeNotifier {
   final List<Organization> _organizationList = [];

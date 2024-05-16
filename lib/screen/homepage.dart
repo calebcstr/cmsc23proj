@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import "package:provider/provider.dart";
-import '../provider/organization_provider.dart';
 import '../model/donor_model.dart';
 import '../model/org_model.dart';
 import 'donor.dart';

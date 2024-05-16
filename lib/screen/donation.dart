@@ -23,7 +23,7 @@ class DonationSum extends StatelessWidget {
       children: [
           const Icon(Icons.person),
           Text('DONATION FOR ${donationentry.orgName}',
-          style: TextStyle(fontSize: 20.0, 
+          style: const TextStyle(fontSize: 20.0, 
           fontWeight: FontWeight.bold,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,),
@@ -36,7 +36,7 @@ class DonationSum extends StatelessWidget {
         )),
         Expanded(
           child: Text(donationentry.checkFood? "Yes" : "No",
-          style: TextStyle(fontSize: 15.0,
+          style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
@@ -50,7 +50,7 @@ class DonationSum extends StatelessWidget {
         )),
         Expanded(
           child: Text(donationentry.checkClothes? "Yes" : "No",
-          style: TextStyle(fontSize: 15.0,
+          style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
@@ -64,7 +64,7 @@ class DonationSum extends StatelessWidget {
         )),
         Expanded(
           child: Text(donationentry.checkCash? "Yes" : "No",
-          style: TextStyle(fontSize: 15.0,
+          style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
@@ -78,7 +78,7 @@ class DonationSum extends StatelessWidget {
         )),
         Expanded(
           child: Text(donationentry.checkNecessities? "Yes" : "No",
-          style: TextStyle(fontSize: 15.0,
+          style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
@@ -92,7 +92,7 @@ class DonationSum extends StatelessWidget {
         )),
         Expanded(
           child: Text(donationentry.checkLogistics? "Pick-Up" : "Delivery",
-          style: TextStyle(fontSize: 15.0,
+          style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
@@ -106,7 +106,7 @@ class DonationSum extends StatelessWidget {
         )),
         Expanded(
           child: Text(donationentry.weight,
-          style: TextStyle(fontSize: 15.0,
+          style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
@@ -120,7 +120,7 @@ class DonationSum extends StatelessWidget {
         )),
         Expanded(
           child: Text(donationentry.date,
-          style: TextStyle(fontSize: 15.0,
+          style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
@@ -134,7 +134,7 @@ class DonationSum extends StatelessWidget {
         )),
         Expanded(
           child: Text(donationentry.address ?? "N/A",
-          style: TextStyle(fontSize: 15.0,
+          style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
@@ -148,7 +148,7 @@ class DonationSum extends StatelessWidget {
         )),
         Expanded(
           child: Text(donationentry.contactNo ?? "N/A",
-          style: TextStyle(fontSize: 15.0,
+          style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
