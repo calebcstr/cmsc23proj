@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import '../donor.dart';
-import '../homepage.dart';
+import 'package:provider/provider.dart';
+import '../provider/donation_provider.dart';
+import 'screen/donor.dart';
+import 'screen/homepage.dart';
+import '../screen/profile.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => DonationList()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,8 +25,8 @@ class MyApp extends StatelessWidget {
     initialRoute: '/main',
     routes: {
       '/main': (context) => const Homepage(),
-      '/donationPage': (context) => const DonationPage()
-  //    '/profile': (context) => const ProfilePage()
+      '/donationPage': (context) => const DonationPage(),
+      '/profile': (context) => const Profile()
     },
     onGenerateRoute: (settings) {
     if (settings.name == DonationPage.routename) {
