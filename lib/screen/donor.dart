@@ -1,9 +1,11 @@
 import 'package:cmsc23proj/screen/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import "package:provider/provider.dart";
 import '../model/donor_model.dart';
 import '../provider/donation_provider.dart';
+import 'qr_image.dart';
 import 'profile.dart';
 
 class DonationPage extends StatefulWidget {
@@ -34,6 +36,7 @@ class _DonationPageState extends State<DonationPage> {
   final TextEditingController _weight = TextEditingController();
   final TextEditingController _number = TextEditingController();
  final TextEditingController _address = TextEditingController();
+ TextEditingController QRcontroller = TextEditingController();
 //clears the text state of the inputted TextFormFields
   void clearTextField() {
   _date.clear();
@@ -289,7 +292,8 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
               print(_address.text);
             },
             controller: _address,
-        ))])),
+        )),
+])),
 
 
       Padding(

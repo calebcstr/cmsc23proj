@@ -1,7 +1,10 @@
 import 'package:cmsc23proj/screen/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import '../model/donor_model.dart';
+import 'qr_image.dart';
+
 
 
 class DonationSum extends StatelessWidget {
@@ -12,10 +15,7 @@ class DonationSum extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    /*  Creates the summary of the info/data of the friend added by the user
-    *   This is essentially the same with what was done with the forms class, but the only difference here is how it was accessed
-    *   The data will be accessed through slambook
-    */  
+    TextEditingController QRcontroller = TextEditingController();
 
     return Scaffold(  
       body: Center(
@@ -125,6 +125,10 @@ class DonationSum extends StatelessWidget {
           textAlign: TextAlign.left,
         ))]),
 
+        Visibility(
+          visible: donationentry.checkLogistics,
+          child: Column(
+            children: [
         Row(
         children: [const Expanded(
           child: Text('Pickup Address',
@@ -152,6 +156,21 @@ class DonationSum extends StatelessWidget {
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
         ))]),
+        
+        Padding(
+          padding: const EdgeInsets.all(50),
+          child: TextButton(
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: ((context) {
+                      return QRImage(QRcontroller);
+                    }),
+                  ),
+                );
+              },
+              child: const Text('GENERATE QR CODE')),)])),
 
         Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.0),
