@@ -1,6 +1,7 @@
 import 'package:cmsc23proj/screen/homepage.dart';
 import 'package:flutter/material.dart';
 import "package:provider/provider.dart";
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../provider/donation_provider.dart';
 import '../model/donor_model.dart';
 import 'donation.dart';
@@ -16,10 +17,12 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  Donation? donation;
-  bool willDonate = true;
 
+@override
   Widget build(BuildContext context) {
+    Stream<QuerySnapshot> donationStream = 
+      context.watch<DonationList>().getDonos;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Profile'),
@@ -50,11 +53,92 @@ class _ProfileState extends State<Profile> {
           ),
         ),
       ),
-      body: Column(mainAxisAlignment: MainAxisAlignment.start, children:[getItems(context)]));
-  }
 
+      body: StreamBuilder(
+          stream: donationStream,
+          builder: (context, snapshot) {
+    if (snapshot.hasError) {
+      return Center(
+        child: Text("Error encountered! ${snapshot.error}"),
+      );
+    } else if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (snapshot.data?.size == 0) {
+      return Column (
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+        const Center(
+        child: Text("No Donations Found"), 
+      ),
+        TextButton(
+          child: const Text('Donate now!'),
+          onPressed: () async {
+          Navigator.pushNamed(context, Homepage.routename);
+          })]);
+    }
+
+    return 
+    Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      ListView.builder(
+      shrinkWrap: true,
+      itemCount: snapshot.data?.docs.length,
+      itemBuilder: ((context, index) {
+        Donation donation = Donation.fromJson(
+            snapshot.data?.docs[index].data() as Map<String, dynamic>);
+      return Dismissible(
+          key: Key(donation.id.toString()),
+          onDismissed: (direction) {
+            context.read<DonationList>().deleteDonation(donation.id!);
+
+             ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(content: Text('Donation to ${donation.orgName} is cancelled')));
+          },
+          background: Container(
+            color: Colors.red,
+            child: const Icon(Icons.delete),
+          ),
+          child: ListTile(
+            title: Text(donation.orgName!),
+            leading: const Icon(Icons.person),
+            onTap: () {
+              Navigator.push(
+              context,
+              MaterialPageRoute(
+              builder: (context) =>
+              DonationSum (donationentry: donation),
+              ));
+                                  },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    context.read<DonationList>().deleteDonation(donation.id!);
+                    },
+                  icon: const Icon(Icons.delete_outlined),
+                )
+              ],
+            ),
+          ),
+        );
+      }),
+    ),
+    TextButton(
+          child: const Text('Donate now!'),
+          onPressed: () async {
+          Navigator.pushNamed(context, Homepage.routename);
+          })]);
+  },
+));
+  }
+  
+/*
     Widget getItems(BuildContext context) {
-    List<Donation> donationlist = context.watch<DonationList>().cart;
+    List<Donation> donationlist = context.watch<DonationList>().getDonos;
     return donationlist.isEmpty
         ? Center (child: Column(children: [Text('No Donations yet!'), 
         TextButton(
@@ -94,16 +178,12 @@ class _ProfileState extends State<Profile> {
                                           onPressed: () {
                                             context
                                                 .read<DonationList>()
-                                                .changeSelectedSlambook(
-                                                    donationlist[index]);
-                                            context
-                                                .read<DonationList>()
-                                                .removeDonation();
+                                                .deleteDonation(donationlist[id]);
                                           }),
                                     ],
                                   ) 
               );}),
             )],
           ));
-  }
+  }*/
 }

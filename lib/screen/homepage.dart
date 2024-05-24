@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import "package:provider/provider.dart";
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../provider/donation_provider.dart';
 import '../model/donor_model.dart';
 import '../model/org_model.dart';
 import 'donor.dart';
@@ -82,38 +85,4 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-      /*Widget getItems(BuildContext context) {
-    List<Donation> donationlist = context.watch<DonationList>().cart;
-    String productname = "";
-    return donationlist.isEmpty
-        ? Center (child: Column(children: [Text('No Donations yet!'), 
-        TextButton(
-          child: const Text('Add a donation'),
-          onPressed: () async {
-          Navigator.pushNamed(context, DonationPage.routename);
-          })]))
-        : Expanded(
-            child: Column(
-            children: [
-              Flexible(
-                  child: ListView.builder(
-                itemCount: donationlist.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    leading: const Icon(Icons.person),
-                            title: Text(donationlist[index]
-                                .date!), //The title of the list tile will only have the friend's name
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DonationSum(
-                                        donationentry: donationlist[index]),
-                    ),
-                  );
-                },
-              );}),
-            )],
-          ));
-  }*/
 }

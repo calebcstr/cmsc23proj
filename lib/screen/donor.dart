@@ -76,9 +76,9 @@ class _DonationPageState extends State<DonationPage> {
   }
 
   Donation? donation;
-    void addEntry() {
+    void addEntry(BuildContext context) {
         donation = Donation(
-        orgName: widget.org!, 
+        orgName: widget.org, 
         checkFood: food,
         checkClothes: clothes,
         checkCash: cash,
@@ -458,7 +458,7 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
                 backgroundColor: MaterialStateProperty.all(Colors.green),
               ),
                 onPressed: () {
-              addEntry();
+              addEntry(context);
           },
                   child: const Text('Save',
                               style: TextStyle(color: Colors.white)),
