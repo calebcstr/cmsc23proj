@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:week9_authentication/pages/admin_page.dart';
 import '../providers/auth_provider.dart';
 import 'default_signup_page.dart';
 
@@ -56,7 +57,7 @@ class _SignInPageState extends State<SignInPage> {
           decoration: const InputDecoration(
               border: OutlineInputBorder(),
               label: Text("Email"),
-              hintText: "juandelacruz09@gmail.com"),
+              hintText: "youremail@example.com"),
           onSaved: (value) => setState(() => email = value),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -99,8 +100,8 @@ class _SignInPageState extends State<SignInPage> {
       case 'invalid-credential':
         message = 'Invalid sign in credentials!';
         break;
-      default:
-        message = 'An error occurred!';
+      case 'not-approved':
+        message = 'Your organization is not yet approved by the admin!';
         break;
     }
     return Padding(
@@ -113,21 +114,65 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Widget get submitButton => ElevatedButton(
-      onPressed: () async {
-        if (_formKey.currentState!.validate()) {
-          _formKey.currentState!.save();
-          String? message = await context
-              .read<UserAuthProvider>()
-              .authService
-              .signIn(email!, password!);
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            _formKey.currentState!.save();
+            String? result = await context.read<UserAuthProvider>().authService.signIn(email!, password!);
 
-          setState(() {
-              errorMessage = message;
-            });
-        }
-      },
-      child: const Text("Sign In"));
-
+            if (result == "donor") {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Login Successful'),
+                    content: const Text('You have successfully logged in as a donor.'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => AdminPage()),
+                          );
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else if (result == "organization") {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Login Successful'),
+                    content: const Text('You have successfully logged in as an organization.'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => AdminPage()),
+                          );
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else {
+              setState(() {
+                errorMessage = result;
+              });
+            }
+          }
+        },
+        child: const Text("Sign In"),
+      );
+    
   Widget get signUpButton => Padding(
         padding: const EdgeInsets.all(30),
         child: Row(

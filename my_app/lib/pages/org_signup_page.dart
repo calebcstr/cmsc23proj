@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import '../image_constants.dart';
 import '../providers/auth_provider.dart';
 
 class OrgSignUpPage extends StatefulWidget {
-  const OrgSignUpPage({Key? key}) : super(key: key);
+  const OrgSignUpPage({super.key});
 
   @override
   State<OrgSignUpPage> createState() => _SignUpState();
@@ -12,8 +15,14 @@ class OrgSignUpPage extends StatefulWidget {
 class _SignUpState extends State<OrgSignUpPage> {
   final _formKey = GlobalKey<FormState>();
   String? organizationName;
-  String? proofOfLegitimacy;
+  String? email;
+  String? password;
+  String? address;
+  String? contactNo;
   String? errorMessage;
+  String? proofOfLegitimacy;
+  bool isLoading = false;
+  File? _imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +38,13 @@ class _SignUpState extends State<OrgSignUpPage> {
               children: [
                 heading,
                 nameField,
+                emailField,
+                passwordField,
+                addressField,
+                contactNoField,
                 proofField,
                 errorMessage != null ? signUpErrorMessage : Container(),
-                submitButton,
+                isLoading ? const CircularProgressIndicator() : submitButton,
               ],
             ),
           ),
@@ -56,7 +69,7 @@ class _SignUpState extends State<OrgSignUpPage> {
             labelText: "Organization Name",
             hintText: "Enter the organization name",
           ),
-          onSaved: (value) => setState(() => organizationName = value),
+          onSaved: (value) => organizationName = value,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return "Please enter the organization name";
@@ -65,31 +78,127 @@ class _SignUpState extends State<OrgSignUpPage> {
           },
         ),
       );
-
-  Widget get proofField => Padding(
+  
+  Widget get emailField => Padding(
         padding: const EdgeInsets.only(bottom: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Proof of Legitimacy",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // TODO
-              },
-              child: Text("Choose File"),
-            ),
-          ],
+        child: TextFormField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: "Email",
+            hintText: "Enter an email",
+          ),
+          onSaved: (value) => setState(() => email = value),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter an email";
+            }
+            return null;
+          },
         ),
       );
+
+  Widget get passwordField => Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: TextFormField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: "Password",
+            hintText: "At least 6 characters",
+          ),
+          obscureText: true,
+          onSaved: (value) => setState(() => password = value),
+          validator: (value) {
+            if (value == null || value.isEmpty || value.length < 6) {
+              return "Please enter a valid password with at least 6 characters";
+            }
+            return null;
+          },
+        ),
+      );
+
+  Widget get addressField => Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: TextFormField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: "Address",
+            hintText: "Enter your address",
+          ),
+          onSaved: (value) => setState(() => address = value),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter your address";
+            }
+            return null;
+          },
+        ),
+      );
+
+  Widget get contactNoField => Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: TextFormField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: "Contact No",
+            hintText: "Enter your contact number",
+          ),
+          onSaved: (value) => setState(() => contactNo = value),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter your contact number";
+            }
+            return null;
+          },
+        ),
+      );
+
+  Widget get proofField => Padding(
+    padding: const EdgeInsets.only(bottom: 30),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Proof of Legitimacy",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        _imageFile != null
+            ? Image.file(_imageFile!)
+            : ElevatedButton(
+          onPressed: _pickImage,
+          child: const Text("Choose File"),
+        ),
+      ],
+    ),
+  );
 
   Widget get submitButton => ElevatedButton(
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
-            Navigator.pop(context);
+            setState(() {
+              isLoading = true;
+            });
+            try {
+              String? result = await context
+                  .read<UserAuthProvider>()
+                  .authService
+                  .signUpOrganization(organizationName!, email!, password!, address!, contactNo!);
+              if (mounted) {
+                Navigator.pop(context);
+              } else {
+                setState(() {
+                  errorMessage = result;
+                });
+              }
+            } catch (e) {
+              setState(() {
+                errorMessage = 'An unexpected error occurred';
+              });
+            } finally {
+              setState(() {
+                isLoading = false;
+              });
+            }
           }
         },
         child: const Text("Sign Up"),
@@ -115,5 +224,20 @@ class _SignUpState extends State<OrgSignUpPage> {
         style: const TextStyle(color: Colors.red),
       ),
     );
+  }
+
+  Future<void> _pickImage() async {
+   final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+      String base64Image = ImageConstants().convertToBase64(_imageFile!);
+      setState(() {
+        proofOfLegitimacy = base64Image;
+      });
+    } else {
+      print('No image selected.');
+    }
   }
 }

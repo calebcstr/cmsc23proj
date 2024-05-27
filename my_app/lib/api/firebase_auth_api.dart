@@ -18,20 +18,21 @@ class FirebaseAuthApi {
     return auth.currentUser;
   }
 
-  Future<String?> signUpDonor(String name, String username, String password, String address, String contactNo) async {
+  Future<String?> signUpDonor(String name, String email, String password, String address, String contactNo) async {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
-        email: '${username.toLowerCase().replaceAll(' ', '')}@example.com',
+        email: email,
         password: password,
       );
 
       await firestore.collection('donors').doc(userCredential.user!.uid).set({
         'name': name,
-        'username': username,
+        'email': email,
         'address': address,
         'contactNo': contactNo,
       });
 
+      return null; // Success
     } on FirebaseAuthException catch (e) {
       return e.code;
     } catch (e) {
@@ -39,43 +40,60 @@ class FirebaseAuthApi {
     }
   }
 
-  Future<String?> signUpOrganization(String organizationName, String proofOfLegitimacy) async {
+  Future<String?> signUpOrganization(String organizationName, String email, String password, String address, String contactNo) async {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
-        email: '${organizationName.toLowerCase().replaceAll(' ', '')}@example.com',
-        password: 'organizationPassword', // You can set a default password for organizations
+        email: email,
+        password: password,
       );
 
       String uid = userCredential.user!.uid;
 
-      // Upload the proof of legitimacy to Firebase Storage (not implemented here)
-
       await firestore.collection('organizations').doc(uid).set({
         'organizationName': organizationName,
-        // 'proofOfLegitimacyUrl': proofOfLegitimacyUrl, // Store the URL of the uploaded file
+        'email': email,
+        'address': address,
+        'contactNo': contactNo,
+        'isApproved': false,
       });
 
-    } on FirebaseException catch (e) {
-      return (e.code);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return e.code;
     } catch (e) {
-      return ('Error: $e');
+      return 'Error: $e';
     }
   }
 
   Future<String?> signIn(String email, String password) async {
     try {
       UserCredential credentials = await auth.signInWithEmailAndPassword(email: email, password: password);
-      print(credentials);
+      String uid = credentials.user!.uid;
+
+      DocumentSnapshot donorDoc = await firestore.collection('donors').doc(uid).get();
+      if (donorDoc.exists) {
+        return "donor";
+      }
+
+      DocumentSnapshot orgDoc = await firestore.collection('organizations').doc(uid).get();
+      if (orgDoc.exists) {
+        bool isApproved = orgDoc.get('isApproved');
+        if (isApproved) {
+          return "organization";
+        } else {
+          return "not-approved";
+        }
+      }
+
       return "Success";
-    } on FirebaseException catch(e) {
-      return (e.code);
+    } on FirebaseAuthException catch(e) {
+      return e.code;
     } catch(e) {
-      return ('Error: $e');
+      return 'Error: $e';
     }
   }
 
   Future<void> signOut() async {
     await auth.signOut();
   }
-
 }
