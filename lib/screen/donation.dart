@@ -1,9 +1,9 @@
-import 'package:cmsc23proj/screen/homepage.dart';
+import 'package:cmsc23proj/screen/donor_view/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../model/donor_model.dart';
-import 'qr_image.dart';
+import 'donor_view/qr_image.dart';
 
 
 

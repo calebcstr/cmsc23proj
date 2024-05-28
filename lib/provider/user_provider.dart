@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cmsc23proj/api/firebase_userinfo_api.dart';
 import 'package:flutter/material.dart';
-import '../api/firebase_donor_api.dart';
 import '../model/user_model.dart';
 
 class UserInfo with ChangeNotifier {
