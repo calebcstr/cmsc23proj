@@ -21,4 +21,4 @@ class UserAuthProvider with ChangeNotifier {
   Future<void> signOut() async {
     await authService.signOut();
   }
-}
+} 

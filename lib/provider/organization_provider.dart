@@ -21,3 +21,14 @@ class OrganizationList with ChangeNotifier {
     notifyListeners();
   }
 }
+
+class OrganizationIdProvider with ChangeNotifier {
+  String _organizationId = '';
+
+  String get organizationId => _organizationId;
+
+  void setOrganizationId(String id) {
+    _organizationId = id;
+    notifyListeners();
+  }
+}

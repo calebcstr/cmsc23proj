@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-
+import 'donation_drives.dart';
 class OrgPage extends StatefulWidget {
   @override
   _OrgPageState createState() => _OrgPageState();
 }
 
-class _OrgPageState extends State<OrgPage> {
+  class _OrgPageState extends State<OrgPage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -88,6 +88,13 @@ class _OrgPageState extends State<OrgPage> {
                       child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(4, 0, 4, 0),
                         child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DonationDrivesPage()),
+                            );
+                          },
                           splashColor: Colors.transparent,
                           focusColor: Colors.transparent,
                           hoverColor: Colors.transparent,
@@ -187,7 +194,7 @@ class _OrgPageState extends State<OrgPage> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Donations"),
+                    Text("Donations"),                    Text("Donations"),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
                       child: Row(
@@ -368,3 +375,4 @@ class _OrgPageState extends State<OrgPage> {
     );
   }
 }
+

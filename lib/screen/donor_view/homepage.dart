@@ -20,9 +20,6 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
 
     List<Organization> orgCatalog = [
-    Organization(name : "Org 1", about: "Computer Science", status: true),
-    Organization(name : "Org 2", about: "Biology", status: true),
-    Organization(name : "Org 3", about: "Community", status: true),
   ]; 
   Donation? donation;
   

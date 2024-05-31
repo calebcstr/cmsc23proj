@@ -1,17 +1,17 @@
+import 'dart:convert';
+import 'donor_model.dart';
+
 class DonationDrive {
-  String id;
-  String title;
-  String description;
-  List<String> imageUrls;
-  double raisedAmount;
-  double goalAmount;
+  final String donationDriveId;
+  final String name;
+  final String description;
+  final String organizationId; // New field for organizationId
 
   DonationDrive({
-    required this.id,
-    required this.title,
+    required this.donationDriveId,
+    required this.name,
     required this.description,
-    required this.imageUrls,
-    required this.raisedAmount,
-    required this.goalAmount,
+    required this.organizationId, // Include organizationId in the constructor
   });
+
 }

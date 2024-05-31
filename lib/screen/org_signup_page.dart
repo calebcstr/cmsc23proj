@@ -197,7 +197,7 @@ class _SignUpState extends State<OrgSignUpPage> {
             } finally {
               setState(() {
                 isLoading = false;
-              });
+              }); 
             }
           }
         },
