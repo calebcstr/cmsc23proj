@@ -72,20 +72,20 @@ class _HomepageState extends State<Homepage> {
               return ListTile(
                 leading: const Icon(Icons.volunteer_activism_outlined),
                 title: Text(
-                    "${orgCatalog[index].name}"),
+                    "${orgCatalog[index].organizationName}"),
                 trailing: TextButton(
-                  child: Text("Donate to ${orgCatalog[index].name}"),
+                  child: Text("Donate to ${orgCatalog[index].organizationName}"),
                   onPressed: () {
                     Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => DonationPage(
-                                      org: orgCatalog[index].name
+                                      org: orgCatalog[index].organizationName
                                     ),
                     ),
                   );
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("${orgCatalog[index].name} added!"),
+                      content: Text("${orgCatalog[index].organizationName} added!"),
                       duration: const Duration(seconds: 1, milliseconds: 100),
                     ));
                   },

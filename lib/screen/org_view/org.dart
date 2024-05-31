@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'donation_drives.dart';
+import '../../provider/organization_provider.dart';
+import 'package:provider/provider.dart';
+
 class OrgPage extends StatefulWidget {
   @override
   _OrgPageState createState() => _OrgPageState();
@@ -8,6 +11,8 @@ class OrgPage extends StatefulWidget {
   class _OrgPageState extends State<OrgPage> {
   @override
   Widget build(BuildContext context) {
+ final organizationId = Provider.of<OrganizationIdProvider>(context).organizationId;
+
     return GestureDetector(
       child: Scaffold(
         body: SafeArea(
@@ -92,7 +97,7 @@ class OrgPage extends StatefulWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => DonationDrivesPage()),
+                                  builder: (context) => DonationDrivesPage(organizationId: organizationId),),
                             );
                           },
                           splashColor: Colors.transparent,

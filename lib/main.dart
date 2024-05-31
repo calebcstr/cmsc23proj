@@ -11,6 +11,7 @@ import '../screen/donor_view/profile.dart';
 import '../provider/donation_drive_provider.dart';
 import '../screen/org_view/add_donation_drive.dart';
 import '../provider/organization_provider.dart';
+import '../api/firebase_auth_api.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,10 +22,10 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: ((context) => UserAuthProvider())),
+        ChangeNotifierProvider(create: ((context) => UserAuthProvider(authService: FirebaseAuthApi()))),
         ChangeNotifierProvider(create: (context) => DonationList()),
         ChangeNotifierProvider(create: ((context) => DonationDriveProvider())),
-        ChangeNotifierProvider(create: (_) => OrganizationIdProvider()),
+        ChangeNotifierProvider(create: (context) => OrganizationIdProvider()),
       ],
       child: const MyApp(),
     ),
@@ -44,8 +45,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const HomePage(),
         '/donor_main': (context) => const Homepage(),
         '/donor_donationPage': (context) => const DonationPage(),
-        '/donor_profile': (context) => const Profile(),
-          '/add_donation_drive': (context) => const AddDonationDrivePage(), // Add the new route here
+        '/donor_profile': (context) => const Profile(), // Add the new route here
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,

@@ -1,5 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../api/firebase_auth_api.dart';
 
 class FirebaseAuthApi {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -35,7 +37,14 @@ class FirebaseAuthApi {
     }
   }
 
-  Future<String?> signUpOrganization(String organizationName, String email, String password, String address, String contactNo) async {
+  Future<String?> signUpOrganization(
+    String organizationName,
+    String email,
+    String password,
+    String address,
+    String contactNo,
+    String organizationId,
+    ) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -45,6 +54,7 @@ class FirebaseAuthApi {
       String uid = userCredential.user!.uid;
 
       await _firestore.collection('organizations').doc(uid).set({
+        'organizationId': organizationId,
         'organizationName': organizationName,
         'email': email,
         'address': address,
@@ -96,5 +106,9 @@ class FirebaseAuthApi {
 
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  Future<DocumentSnapshot> fetchUserDetails(String uid, String userType) async {
+    return _firestore.collection(userType).doc(uid).get();
   }
 }

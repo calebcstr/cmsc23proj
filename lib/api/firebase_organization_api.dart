@@ -9,7 +9,7 @@ class FirebaseOrganizationAPI {
     try {
       await db
           .collection("organizations")
-          .doc(organization.id)
+          .doc(organization.organizationId)
           .set(organization.toJson());
       return "Successfully registered organization!";
     } on FirebaseException catch (e) {
@@ -32,4 +32,15 @@ class FirebaseOrganizationAPI {
       return "Error in ${e.code}: ${e.message}";
     }
   }
+
+   Future<String> getOrganizationId(String orgDocumentId) async {
+    DocumentSnapshot doc = await db.collection('organizations').doc(orgDocumentId).get();
+    if (doc.exists) {
+      return doc['organizationId']; 
+    } else {
+      throw Exception('Organization not found');
+    }
+  }
 }
+
+

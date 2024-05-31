@@ -1,31 +1,25 @@
 import 'dart:convert';
 
 class Organization {
-  final String id;
+  final String organizationId;
   final String organizationName;
   final String email;
-  final String username;
-  final String name;
   final String address;
   final String contact;
 
   Organization({
-    required this.id,
+    required this.organizationId,
     required this.organizationName,
     required this.email,
-    required this.username,
-    required this.name,
     required this.address,
     required this.contact,
   });
 
   factory Organization.fromJson(Map<String, dynamic> json) {
     return Organization(
-      id: json['id'],
+      organizationId: json['organizationId'],
       organizationName: json['Organization Name'],
       email: json['Email'],
-      username: json['Username'],
-      name: json['Name'],
       address: json['Address'],
       contact: json['Contact'],
     );
@@ -38,11 +32,9 @@ class Organization {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'organizationId': organizationId,
       'Organization Name': organizationName,
       'Email': email,
-      'Username': username,
-      'Name': name,
       'Address': address,
       'Contact': contact,
     };

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 import '../image_constants.dart';
 import '../provider/auth_provider.dart';
 
@@ -23,6 +24,8 @@ class _SignUpState extends State<OrgSignUpPage> {
   String? proofOfLegitimacy;
   bool isLoading = false;
   File? _imageFile;
+
+  final Uuid uuid = Uuid();
 
   @override
   Widget build(BuildContext context) {
@@ -179,10 +182,18 @@ class _SignUpState extends State<OrgSignUpPage> {
               isLoading = true;
             });
             try {
+              String organizationId = uuid.v4();
               String? result = await context
                   .read<UserAuthProvider>()
                   .authService
-                  .signUpOrganization(organizationName!, email!, password!, address!, contactNo!);
+                  .signUpOrganization(
+                    organizationName!,
+                    email!,
+                    password!,
+                    address!,
+                    contactNo!,
+                    organizationId,
+                  );
               if (mounted) {
                 Navigator.pop(context);
               } else {
