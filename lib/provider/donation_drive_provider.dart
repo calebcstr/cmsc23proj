@@ -21,9 +21,11 @@ class DonationDriveProvider with ChangeNotifier {
     await firebaseService.deleteDonationDrive(id);
     notifyListeners();
   }
-
-  Future<void> editDonationDrive(String id, DonationDrive updatedDrive) async {
-    await firebaseService.editDonationDrive(id, updatedDrive);
+  
+ Future<void> editDonationDrive(String donationDriveId, String name, String description) async {
+    await firebaseService.editDonationDrive(donationDriveId, name, description);
     notifyListeners();
   }
+
+
 }

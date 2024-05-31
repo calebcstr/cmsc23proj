@@ -31,12 +31,16 @@ class FirebaseDonationDriveAPI {
     await db.collection("donation_drives").doc(id).delete();
   }
 
-  Future<void> editDonationDrive(String id, DonationDrive updatedDrive) async {
-    await db.collection("donation_drives").doc(id).update({
-      'donationDriveId': updatedDrive.donationDriveId,
-      'name': updatedDrive.name,
-      'description': updatedDrive.description,
-      'organizationId': updatedDrive.organizationId,
-    });
+ Future<void> editDonationDrive(String donationDriveId, String name, String description) async {
+    try {
+      await db.collection('donation_drives').doc(donationDriveId).update({
+        'name': name,
+        'description': description,
+      });
+    } catch (e) {
+      print('Error editing donation drive: $e');
+      throw e;
+    }
   }
+
 }
