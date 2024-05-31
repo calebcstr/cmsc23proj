@@ -4,6 +4,7 @@ import 'admin_page.dart';
 import '../provider/auth_provider.dart';
 import 'default_signup_page.dart';
 import 'donor_view/homepage.dart';
+import 'org_view/org.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -23,21 +24,22 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 100, horizontal: 30),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  heading,
-                  emailField,
-                  passwordField,
-                  errorMessage != null ? signInErrorMessage : Container(),
-                  submitButton,
-                  signUpButton
-                ],
-              ),
-            )),
+          margin: const EdgeInsets.symmetric(vertical: 100, horizontal: 30),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                heading,
+                emailField,
+                passwordField,
+                errorMessage != null ? signInErrorMessage : Container(),
+                submitButton,
+                signUpButton
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -49,8 +51,6 @@ class _SignInPageState extends State<SignInPage> {
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
       );
-
-  
 
   Widget get emailField => Padding(
         padding: const EdgeInsets.only(bottom: 30),
@@ -121,48 +121,19 @@ class _SignInPageState extends State<SignInPage> {
             String? result = await context.read<UserAuthProvider>().authService.signIn(email!, password!);
 
             if (result == "donor") {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Login Successful'),
-                    content: const Text('You have successfully logged in as a donor.'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => Homepage()),
-                          );
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                },
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Homepage()),
               );
             } else if (result == "organization") {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Login Successful'),
-                    content: const Text('You have successfully logged in as an organization.'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => AdminPage()),
-                          );
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                },
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => OrgPage()),
+              );
+            } else if (result == "admin") {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => AdminPage()),
               );
             } else {
               setState(() {
@@ -173,7 +144,7 @@ class _SignInPageState extends State<SignInPage> {
         },
         child: const Text("Sign In"),
       );
-    
+
   Widget get signUpButton => Padding(
         padding: const EdgeInsets.all(30),
         child: Row(
