@@ -6,6 +6,7 @@ class Organization {
   final String email;
   final String address;
   final String contact;
+  final bool isOpenForDonations;
 
   Organization({
     required this.organizationId,
@@ -13,6 +14,7 @@ class Organization {
     required this.email,
     required this.address,
     required this.contact,
+    this.isOpenForDonations = true, // Initialize to true
   });
 
   factory Organization.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class Organization {
       email: json['Email'],
       address: json['Address'],
       contact: json['Contact'],
+      isOpenForDonations: json['isOpenForDonations'] ?? true, // Handle missing field
     );
   }
 
@@ -37,6 +40,7 @@ class Organization {
       'Email': email,
       'Address': address,
       'Contact': contact,
+      'isOpenForDonations': isOpenForDonations, // Add to JSON
     };
   }
 }

@@ -10,6 +10,7 @@ class UserAuthProvider with ChangeNotifier {
   User? _user;
   String? _userRole;
   String? _organizationId;
+  String? _organizationName; // Added organizationName field
 
   UserAuthProvider({required this.authService}) {
     _userStream = authService.fetchUser();
@@ -17,9 +18,13 @@ class UserAuthProvider with ChangeNotifier {
       _user = user;
       if (user != null) {
         await _fetchUserRole(user.uid);
+        if (_userRole == "organization" && _organizationId != null) {
+          await _fetchOrganizationName(_organizationId!); // Fetch organization name
+        }
       } else {
         _userRole = null;
         _organizationId = null;
+        _organizationName = null;
       }
       notifyListeners();
     });
@@ -29,6 +34,7 @@ class UserAuthProvider with ChangeNotifier {
   User? get user => _user;
   String? get userRole => _userRole;
   String? get organizationId => _organizationId;
+  String? get organizationName => _organizationName; // Getter for organizationName
 
   Future<void> _fetchUserRole(String uid) async {
     try {
@@ -62,11 +68,36 @@ class UserAuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> _fetchOrganizationName(String organizationId) async {
+    try {
+      DocumentSnapshot orgDoc = await _firestore.collection('organizations').doc(organizationId).get();
+      if (orgDoc.exists) {
+        _organizationName = orgDoc.get('organizationName') as String?;
+      }
+    } catch (e) {
+      _organizationName = null;
+      print('Error fetching organization name: $e');
+    }
+  }
+
+  Future<String?> getOrganizationName(String? organizationId) async {
+  try {
+    DocumentSnapshot orgDoc = await _firestore.collection('organizations').doc(organizationId).get();
+    if (orgDoc.exists) {
+      return orgDoc.get('organizationName') as String?;
+    }
+  } catch (e) {
+    print('Error fetching organization name: $e');
+  }
+  return null;
+}
+
   Future<void> signOut() async {
     await authService.signOut();
     _user = null;
     _userRole = null;
     _organizationId = null;
+    _organizationName = null;
     notifyListeners();
   }
 

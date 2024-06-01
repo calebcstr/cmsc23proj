@@ -22,7 +22,7 @@ class FirebaseOrganizationAPI {
     return db.collection("organizations").snapshots();
   }
 
-  // Delete organization
+  // Delete organization  
   Future<String> deleteOrganization(String id) async {
     try {
       await db.collection("organizations").doc(id).delete();
@@ -41,6 +41,18 @@ class FirebaseOrganizationAPI {
       throw Exception('Organization not found');
     }
   }
+
+static Future<DocumentSnapshot<Map<String, dynamic>>> getOrganization(String fieldName, String fieldValue) async {
+  QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance.collection('organizations').where(fieldName, isEqualTo: fieldValue).get();
+  if (querySnapshot.docs.isNotEmpty) {
+    return querySnapshot.docs.first;
+  } else {
+    throw Exception('Organization not found');
+  }
+}
+
+
+
 }
 
 

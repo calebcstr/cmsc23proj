@@ -38,37 +38,41 @@ class FirebaseAuthApi {
   }
 
   Future<String?> signUpOrganization(
-    String organizationName,
-    String email,
-    String password,
-    String address,
-    String contactNo,
-    String organizationId,
-    ) async {
-    try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  String organizationName,
+  String email,
+  String password,
+  String address,
+  String contactNo,
+  String organizationId,
+  String? proofOfLegitimacy,
+  bool isOpenForDonations,
+) async {
+  try {
+    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      String uid = userCredential.user!.uid;
+    String uid = userCredential.user!.uid;
 
-      await _firestore.collection('organizations').doc(uid).set({
-        'organizationId': organizationId,
-        'organizationName': organizationName,
-        'email': email,
-        'address': address,
-        'contactNo': contactNo,
-        'isApproved': false,
-      });
+    await _firestore.collection('organizations').doc(uid).set({
+      'organizationId': organizationId,
+      'organizationName': organizationName,
+      'email': email,
+      'address': address,
+      'contactNo': contactNo,
+      'proofOfLegitimacy': proofOfLegitimacy,
+      'isOpenForDonations': isOpenForDonations,
+      'isApproved': false,
+    });
 
-      return null;
-    } on FirebaseAuthException catch (e) {
-      return e.code;
-    } catch (e) {
-      return 'Error: $e';
-    }
+    return null;
+  } on FirebaseAuthException catch (e) {
+    return e.code;
+  } catch (e) {
+    return 'Error: $e';
   }
+}
 
   Future<String?> signIn(String email, String password) async {
     try {

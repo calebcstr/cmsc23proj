@@ -25,7 +25,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: ((context) => UserAuthProvider(authService: FirebaseAuthApi()))),
         ChangeNotifierProvider(create: (context) => DonationList()),
         ChangeNotifierProvider(create: ((context) => DonationDriveProvider())),
-        ChangeNotifierProvider(create: (context) => OrganizationIdProvider()),
+        ChangeNotifierProvider(create: ((context) => OrganizationIdProvider())),
+        ChangeNotifierProvider(create: ((context) => OrganizationProvider())),
       ],
       child: const MyApp(),
     ),
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const HomePage(),
         '/donor_main': (context) => const Homepage(),
         '/donor_donationPage': (context) => const DonationPage(),
-        '/donor_profile': (context) => const Profile(), // Add the new route here
+        '/donor_profile': (context) => const Profile(), 
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,

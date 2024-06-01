@@ -1,6 +1,7 @@
-import 'package:cmsc23proj/model/org_model.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../api/firebase_organization_api.dart';
+import '../model/org_model.dart';
 
 class OrganizationList with ChangeNotifier {
   final List<Organization> _organizationList = [];
@@ -44,4 +45,58 @@ class OrganizationIdProvider with ChangeNotifier {
     _organizationId = id;
     notifyListeners();
   }
+}
+
+class OrganizationProvider extends ChangeNotifier {
+  String _organizationName = '';
+  String _email = '';
+  String _address = '';
+  String _contact = '';
+  bool _isOpenForDonations = false;
+  String _organizationId = '';
+
+  String get organizationName => _organizationName;
+  String get email => _email;
+  String get address => _address;
+  String get contact => _contact;
+  bool get isOpenForDonations => _isOpenForDonations;
+
+  Future<void> fetchOrganizationDetails(String field, String organizationId) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseOrganizationAPI.getOrganization(field,organizationId);
+      if (doc.exists) {
+        final data = doc.data()!;
+        _organizationId = organizationId;
+        _organizationName = data['organizationName'] ?? '';
+        _email = data['email'] ?? '';
+        _address = data['address'] ?? '';
+        _contact = data['contactNo'] ?? '';
+        _isOpenForDonations = data['isOpenForDonations'] ?? false;
+        notifyListeners();
+      } 
+    } catch (e) {
+      print('Error fetching organization details: $e');
+    }
+  }
+
+  Future<void> updateIsOpenForDonations(bool status) async {
+  try {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+        .collection('organizations')
+        .where('organizationId', isEqualTo: _organizationId)
+        .get();
+
+    for (DocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+      await doc.reference.update({
+        'isOpenForDonations': status,
+      });
+    }
+
+    _isOpenForDonations = status;
+    notifyListeners();
+  } catch (e) {
+    print('Error updating isOpenForDonations: $e');
+  }
+}
+
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,6 +23,7 @@ class _SignUpState extends State<OrgSignUpPage> {
   String? contactNo;
   String? errorMessage;
   String? proofOfLegitimacy;
+  bool isOpenForDonations = true;
   bool isLoading = false;
   File? _imageFile;
 
@@ -45,6 +47,7 @@ class _SignUpState extends State<OrgSignUpPage> {
                 passwordField,
                 addressField,
                 contactNoField,
+                isOpenForDonationsField,
                 proofField,
                 errorMessage != null ? signUpErrorMessage : Container(),
                 isLoading ? const CircularProgressIndicator() : submitButton,
@@ -155,6 +158,28 @@ class _SignUpState extends State<OrgSignUpPage> {
         ),
       );
 
+
+  Widget get isOpenForDonationsField => Padding(
+      padding: const EdgeInsets.only(bottom: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            "Open for Donations:",
+            style: TextStyle(fontSize: 16),
+          ),
+          Switch(
+            value: isOpenForDonations,
+            onChanged: (bool value) {
+              setState(() {
+                isOpenForDonations = value;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+
   Widget get proofField => Padding(
     padding: const EdgeInsets.only(bottom: 30),
     child: Column(
@@ -173,6 +198,7 @@ class _SignUpState extends State<OrgSignUpPage> {
       ],
     ),
   );
+
 
   Widget get submitButton => ElevatedButton(
         onPressed: () async {
@@ -193,6 +219,8 @@ class _SignUpState extends State<OrgSignUpPage> {
                     address!,
                     contactNo!,
                     organizationId,
+                    proofOfLegitimacy,
+                    isOpenForDonations, // Pass the new field
                   );
               if (mounted) {
                 Navigator.pop(context);
