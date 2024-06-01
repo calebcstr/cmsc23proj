@@ -54,7 +54,6 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyD1B54V3mLYpnQ9npNPIZDR8afpfUV8Srw',
     appId: '1:1051617584787:android:59d8d533bc1134b7c78f66',
     messagingSenderId: '1051617584787',
-    projectId: 'cmsc23-project-149f1',
     storageBucket: 'cmsc23-project-149f1.appspot.com',
   );
 

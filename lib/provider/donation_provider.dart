@@ -7,18 +7,30 @@ class DonationList with ChangeNotifier {
   late FirebaseDonationAPI firebaseService;
   late Stream<QuerySnapshot> _donationStream;
 
-DonationList() {
-  firebaseService = FirebaseDonationAPI();
-  fetchTodos();
-}
+  DonationList() {
+    firebaseService = FirebaseDonationAPI();
+  }
 
-Stream<QuerySnapshot> get getDonos => _donationStream;
+  Stream<QuerySnapshot> get getDonos => _donationStream;
 
-  fetchTodos() {
-  _donationStream = firebaseService.getAllDonation();
-  notifyListeners();
-}
+  Stream<QuerySnapshot> getDonationsbyOrg(String organizationId) {
+    return firebaseService.getDonationsbyOrg(organizationId);
+  }
 
+
+  Future<void> updateDonationStatus(String id, String status)  {
+    return firebaseService.updateDonationStatus(id,status);
+  }
+
+  Future<String> getStatus(String donationId) async {
+    try {
+      return await firebaseService.getStatus(donationId);
+    } catch (e) {
+      print('Error getting donation status: $e');
+      rethrow;
+    }
+  }
+ 
   void addDonation(Donation donation) async {
     String message = await firebaseService.addDonation(donation.toJson(donation));
     print(message);
@@ -30,4 +42,8 @@ Stream<QuerySnapshot> get getDonos => _donationStream;
     print(message);
     notifyListeners();
   }
+ Stream<DocumentSnapshot> getDonationById(String donationId) {
+    return firebaseService.getDonation(donationId);
+  }
+
 }

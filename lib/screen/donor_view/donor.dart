@@ -85,7 +85,9 @@ class _DonationPageState extends State<DonationPage> {
         date: _date.text,
         address: _address.text,
         contactNo: _number.text,
-        weight: _weight.text);
+        weight: _weight.text,
+        status: "Pending",
+        organizationId: 'get it from the donation drive'); //GET IT FROM DONO DRIVE
         context.read<DonationList>().addDonation(donation!);
         Navigator.pop(context);
   }
