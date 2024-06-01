@@ -2,11 +2,11 @@ import 'dart:convert';
 
 class Organization {
   final String organizationId;
-  final String organizationName;
-  final String email;
-  final String address;
-  final String contact;
-  final bool isOpenForDonations;
+      final String organizationName;
+      final String email;
+      final String address;
+      final String contact;
+      final bool isOpenForDonations;
 
   Organization({
     required this.organizationId,
