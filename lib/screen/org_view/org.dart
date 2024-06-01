@@ -33,9 +33,10 @@ class _OrgPageState extends State<OrgPage> {
                           padding: EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.24,
-                            height: 110,
+                            height: 120,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.black, width: 2),
                             ),
                             child: Padding(
                               padding: EdgeInsets.all(12),
@@ -48,12 +49,12 @@ class _OrgPageState extends State<OrgPage> {
                                     padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12),
                                     child: Icon(
                                       Icons.account_balance_outlined,
-                                      size: 36,
+                                      size: 48,
                                     ),
                                   ),
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                                    child: Text("Donation"),
+                                    child: Text("Donation", style: TextStyle(fontSize: 16),),
                                   ),
                                 ],
                               ),
@@ -79,10 +80,10 @@ class _OrgPageState extends State<OrgPage> {
                             highlightColor: Colors.transparent,
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.24,
-                              height: 110,
+                              height: 120,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
-                                shape: BoxShape.rectangle,
+                                border: Border.all(color: Colors.black, width: 2),
                               ),
                               child: Padding(
                                 padding: EdgeInsets.all(12),
@@ -95,7 +96,7 @@ class _OrgPageState extends State<OrgPage> {
                                       padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12),
                                       child: Icon(
                                         Icons.swap_horiz_outlined,
-                                        size: 36,
+                                        size: 48,
                                       ),
                                     ),
                                     Padding(
@@ -104,7 +105,7 @@ class _OrgPageState extends State<OrgPage> {
                                         "Donation Drives",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ),
@@ -133,9 +134,10 @@ class _OrgPageState extends State<OrgPage> {
                             highlightColor: Colors.transparent,
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.24,
-                              height: 110,
+                              height: 120,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.black, width: 2),
                               ),
                               child: Padding(
                                 padding: EdgeInsets.all(12),
@@ -148,7 +150,7 @@ class _OrgPageState extends State<OrgPage> {
                                       padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12),
                                       child: Icon(
                                         Icons.stacked_line_chart_rounded,
-                                        size: 36,
+                                        size: 48,
                                       ),
                                     ),
                                     Padding(
@@ -156,7 +158,7 @@ class _OrgPageState extends State<OrgPage> {
                                       child: Text(
                                         "Profile",
                                         style: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ),
