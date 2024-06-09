@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cmsc23proj/model/donor_model.dart';
+import 'package:cmsc23proj/screen/donor_view/donor.dart';
+import 'package:cmsc23proj/screen/org_view/org.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './admin_page.dart';
-// import './donor_page.dart';
-// import './organization_home_page.dart';
 import '../provider/auth_provider.dart';
 import 'default_signup_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -172,7 +173,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.of(context).pop();
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => Placeholder()),
+                        MaterialPageRoute(builder: (context) => DonationPage()),
                       );
                     },
                     child: const Text('OK', style: TextStyle(color: Colors.black)),
@@ -198,7 +199,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.of(context).pop();
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => Placeholder()),
+                        MaterialPageRoute(builder: (context) => OrgPage()),
                       );
                     },
                     child: const Text('OK', style: TextStyle(color: Colors.black)),
@@ -224,7 +225,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.of(context).pop();
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => Placeholder()),
+                        MaterialPageRoute(builder: (context) => AdminPage()),
                       );
                     },
                     child: const Text('OK', style: TextStyle(color: Colors.black)),
@@ -294,7 +295,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.of(context).pop();
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => Placeholder()),
+                        MaterialPageRoute(builder: (context) => DonationPage()),
                       );
                     },
                     child: const Text('OK', style: TextStyle(color: Colors.black)),
