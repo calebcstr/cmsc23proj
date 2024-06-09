@@ -17,6 +17,10 @@ class DonationDriveProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Stream<List<DonationDrive>> getDrivesbyOrgId(String orgId) {
+    return firebaseService.getDrivesByOrgId(orgId);
+  }
+
   Future<void> deleteDonationDrive(String id) async {
     await firebaseService.deleteDonationDrive(id);
     notifyListeners();
@@ -26,6 +30,5 @@ class DonationDriveProvider with ChangeNotifier {
     await firebaseService.editDonationDrive(donationDriveId, name, description);
     notifyListeners();
   }
-
 
 }

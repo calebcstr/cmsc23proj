@@ -30,6 +30,19 @@ class UserAuthProvider with ChangeNotifier {
     });
   }
 
+    Future<Map<String, dynamic>?> fetchDonorDetails(String email) async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('donor')
+          .where('email', isEqualTo: email)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.first.data() as Map<String, dynamic>;
+      }
+    } catch (e) {
+      print("Error fetching donor details: $e");
+    }
+    return null;
+  }
   Stream<User?> get userStream => _userStream;
   User? get user => _user;
   String? get userRole => _userRole;

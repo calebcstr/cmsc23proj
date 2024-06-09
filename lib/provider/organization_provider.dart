@@ -4,23 +4,32 @@ import '../api/firebase_organization_api.dart';
 import '../model/org_model.dart';
 
 class OrganizationList with ChangeNotifier {
-  final List<Organization> _organizationList = [];
+  final FirebaseOrganizationAPI firebaseService = FirebaseOrganizationAPI();
+  late Stream<List<Organization>> _organizationList;
 
-  List<Organization> get orgList => _organizationList;
+  OrganizationList() {
+    _organizationList = firebaseService.getAllOrganizations();
+  }
 
-  void addOrganization(Organization org) {
-    _organizationList.add(org);
+  Stream<List<Organization>> get orgList => _organizationList;
+
+
+  Future<void> addOrganization(Organization org) async {
+    await firebaseService.addOrganization(org);
     notifyListeners();
   }
 
-  void removeDonation(String name) {
-    for (int i = 0; i < _organizationList.length; i++) {
-      if (_organizationList[i].organizationName == name) {
-        _organizationList.remove(_organizationList[i]);
-        break;
-      }
-    }
+  Future<void> deleteOrganization(String id) async {
+    await firebaseService.deleteOrganization(id);
     notifyListeners();
+  }
+
+  Stream<List<Organization>> getAllOrganizations() {
+    return firebaseService.getAllOrganizations();
+  }
+
+  Stream<List<Organization>> getAllOpenOrganizations() {
+    return firebaseService.getAllOpenOrganizations();
   }
 }
 

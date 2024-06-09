@@ -3,16 +3,16 @@ import 'package:provider/provider.dart';
 import '../../provider/donation_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DonationInfoPage extends StatefulWidget {
+class DonationSummary extends StatefulWidget {
   final String donationId;
 
-  DonationInfoPage({required this.donationId});
+  const DonationSummary({super.key, required this.donationId});
 
   @override
-  _DonationInfoPageState createState() => _DonationInfoPageState();
+  State<DonationSummary> createState() => _DonationSumState();
 }
 
-class _DonationInfoPageState extends State<DonationInfoPage> {
+class _DonationSumState extends State<DonationSummary> {
   String? _currentStatus;
   String? _newStatus;
   bool _canUpdate = true;
@@ -23,14 +23,14 @@ class _DonationInfoPageState extends State<DonationInfoPage> {
     _currentStatus = '';
     _newStatus = _currentStatus;
     _canUpdate = true;
-    _getStatus();
+    _cancelStatus();
   }
 
-  Future<void> _getStatus() async {
+  Future<void> _cancelStatus() async {
     final donationProvider = Provider.of<DonationList>(context, listen: false);
-    _currentStatus = await donationProvider.getStatus(widget.donationId);
+    _currentStatus = await donationProvider.cancelStatus(widget.donationId);
     setState(() {
-      _newStatus = _currentStatus;
+      _newStatus = 'Cancelled';
       _canUpdate = !(_currentStatus == 'Complete' || _currentStatus == 'Cancelled');
     });
   }
@@ -71,21 +71,6 @@ class _DonationInfoPageState extends State<DonationInfoPage> {
                   Text('Contact Number: ${donationData['Contact Number']}', style: TextStyle(fontFamily: 'Roboto')),
                   Text('Weight: ${donationData['Weight']}', style: TextStyle(fontFamily: 'Roboto')),
                   SizedBox(height: 20.0),
-                  ...['Pending', 'Confirmed', 'Scheduled for Pick-up', 'Complete', 'Cancelled']
-                      .map((status) => RadioListTile(
-                            title: Text(status),
-                            value: status,
-                            groupValue: _newStatus,
-                            onChanged: _canUpdate
-                                ? (value) {
-                                    setState(() {
-                                      _newStatus = value as String;
-                                    });
-                                  }
-                                : null,
-                          ))
-                      .toList(),
-                  SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: (_canUpdate && _newStatus != null)
                         ? () async {
@@ -94,7 +79,7 @@ class _DonationInfoPageState extends State<DonationInfoPage> {
                             Navigator.pop(context, _newStatus); // Return new status to previous screen
                           }
                         : null,
-                    child: Text('Update Status'),
+                    child: Text('Cancel Donation'),
                   ),
                 ],
               ),

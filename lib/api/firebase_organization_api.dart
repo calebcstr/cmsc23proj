@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/org_model.dart';
+import '../model/donation_drive_model.dart';
 
 class FirebaseOrganizationAPI {
   static final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -18,8 +19,43 @@ class FirebaseOrganizationAPI {
   }
 
   // Get all organizations
-  Stream<QuerySnapshot> getAllOrganizations() {
-    return db.collection("organizations").snapshots();
+  Stream<List<Organization>> getAllOpenOrganizations() {
+    return db
+        .collection('organizations')
+        .where('isOpenForDonations', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Organization(
+          organizationId: data['organizationId'] ?? '',
+          organizationName: data['organizationName'] ?? '',
+          email: data['email'] ?? '',
+          address: data['address'] ?? '',
+          contact: data['contactNo'] ?? '',
+          isOpenForDonations: data['isOpenForDonations'] ?? false,
+        );
+      }).toList();
+    });
+  }
+
+    Stream<List<Organization>> getAllOrganizations() {
+    return db
+        .collection('organizations')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Organization(
+          organizationId: data['organizationId'] ?? '',
+          organizationName: data['organizationName'] ?? '',
+          email: data['email'] ?? '',
+          address: data['address'] ?? '',
+          contact: data['contactNo'] ?? '',
+          isOpenForDonations: data['isOpenForDonations'] ?? false,
+        );
+      }).toList();
+    });
   }
 
   // Delete organization  
@@ -50,8 +86,6 @@ static Future<DocumentSnapshot<Map<String, dynamic>>> getOrganization(String fie
     throw Exception('Organization not found');
   }
 }
-
-
 
 }
 

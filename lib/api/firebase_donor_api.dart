@@ -35,13 +35,19 @@ Stream<DocumentSnapshot> getDonation(String donationId) {
 
    Stream<QuerySnapshot> getDonationsbyOrg(String organizationId)
   {
-    return db.collection("Donation").where('organizationId', isEqualTo: organizationId).snapshots();
+    return db.collection("Donation").where('OrganizationId', isEqualTo: organizationId).snapshots();
   }
+
+     Stream<QuerySnapshot> getDonationsbyEmail(String donorEmail)
+  {
+    return db.collection("Donation").where('Email', isEqualTo: donorEmail).snapshots();
+  }
+
 
   Future<void> updateDonationStatus(String donationId, String newStatus) async {
     try {
       await db.collection('Donation').doc(donationId).update({
-        'status': newStatus,
+        'Status': newStatus,
       });
       print('Donation status updated successfully.');
     } catch (e) {
@@ -54,7 +60,7 @@ Stream<DocumentSnapshot> getDonation(String donationId) {
     try {
       DocumentSnapshot donationDoc = await db.collection('Donation').doc(donationId).get();
       if (donationDoc.exists) {
-        return donationDoc['status'];
+        return donationDoc['Status'];
       } else {
         throw Exception('Document with ID $donationId not found.');
       }

@@ -1,30 +1,36 @@
+import 'package:cmsc23proj/screen/donation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../provider/donation_provider.dart'; 
-import '../../provider/auth_provider.dart'; 
+import '../../provider/donation_provider.dart';
+import '../../provider/auth_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'donation_information.dart';
+import 'donation.dart';
 
-class DonationsToOrganizationPage extends StatelessWidget {
-  final String organizationId;
 
-  DonationsToOrganizationPage({required this.organizationId});
+class YourDonations extends StatefulWidget {
+  const YourDonations({super.key});
+  static const routename = '/orgpage';
 
   @override
+  State<YourDonations> createState() => _YourDonationsState();
+}
+
+class _YourDonationsState extends State<YourDonations> {
+  @override
   Widget build(BuildContext context) {
-    final donationProvider = Provider.of<DonationList>(context, listen: false);
-    final userAuthProvider = Provider.of<UserAuthProvider>(context, listen: false);
+    final userProvider = Provider.of<UserAuthProvider>(context);
+    final user = userProvider.user;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Donations to Organization'),
+        title: const Text('Donation History'),
       ),
       body: SafeArea(
         top: true,
         child: Consumer<DonationList>(
           builder: (context, provider, child) {
             return StreamBuilder<QuerySnapshot>(
-              stream: provider.getDonationsbyOrg(userAuthProvider.organizationId!),
+              stream: provider.getDonationsbyEmail(user!.email),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -45,7 +51,7 @@ class DonationsToOrganizationPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DonationInfoPage(donationId: donation.id),
+                              builder: (context) => DonationSummary(donationId: donation.id),
                             ),
                           );
                         },

@@ -43,4 +43,22 @@ class FirebaseDonationDriveAPI {
     }
   }
 
+   Stream<QuerySnapshot> getDrivesbyOrg(String organizationId)
+  {
+    return db.collection("donation_drives").where('OrganizationId', isEqualTo: organizationId).snapshots();
+  }
+
+  Stream<List<DonationDrive>> getDrivesByOrgId(String orgId) {
+    return db
+        .collection('donation_drives')
+        .where('organizationId', isEqualTo: orgId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return DonationDrive.fromJson(data);
+      }).toList();
+    });
+  }
+
 }

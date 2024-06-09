@@ -2,8 +2,7 @@ import 'dart:convert';
 
 class Donation {
   String? id;
-  String? orgName;
-  String? donor;
+  final String? email;
   final bool checkFood;
   final bool checkClothes;
   final bool checkCash;
@@ -13,11 +12,12 @@ class Donation {
   final String? address;
   final String? contactNo;
   final String weight;
-  final String status;
+  String? status;
   final String organizationId;
+  final String driveId;
 
   Donation({
-    required this.orgName,
+    required this.email,
     required this.checkFood,
     required this.checkClothes,
     required this.checkCash,
@@ -27,13 +27,14 @@ class Donation {
     this.address,
     this.contactNo,
     required this.weight,
-    required this.status,
+    this.status,
     required this.organizationId,
+    required this.driveId,
   });
 
   factory Donation.fromJson(Map<String, dynamic> json) {
     return Donation(
-      orgName: json['Org Name'],
+      email: json['Email'],
       checkFood: json['Food'],
       checkClothes: json['Clothes'],
       checkCash: json['Cash'],
@@ -45,6 +46,7 @@ class Donation {
       weight: json['Weight'],
       status: json['Status'],
       organizationId: json['OrganizationId'],
+      driveId: json['DriveId']
     );
   }
 
@@ -55,7 +57,7 @@ class Donation {
 
   Map<String, dynamic> toJson(Donation donation) {
     return {
-      'Org Name': donation.orgName,
+      'Email': donation.email,
       'Food': donation.checkFood,
       'Clothes': donation.checkClothes,
       'Cash': donation.checkCash,
@@ -67,6 +69,7 @@ class Donation {
       'Weight': donation.weight,
       'Status': donation.status,
       'OrganizationId': donation.organizationId,
+      'DriveId': donation.driveId
     };
   }
 }

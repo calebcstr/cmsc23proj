@@ -20,10 +20,10 @@ class Organization {
   factory Organization.fromJson(Map<String, dynamic> json) {
     return Organization(
       organizationId: json['organizationId'],
-      organizationName: json['Organization Name'],
-      email: json['Email'],
-      address: json['Address'],
-      contact: json['Contact'],
+      organizationName: json['organizationName'],
+      email: json['email'],
+      address: json['address'],
+      contact: json['contact'],
       isOpenForDonations: json['isOpenForDonations'] ?? true, // Handle missing field
     );
   }
@@ -36,10 +36,10 @@ class Organization {
   Map<String, dynamic> toJson() {
     return {
       'organizationId': organizationId,
-      'Organization Name': organizationName,
-      'Email': email,
-      'Address': address,
-      'Contact': contact,
+      'organization Name': organizationName,
+      'email': email,
+      'address': address,
+      'contactNo': contact,
       'isOpenForDonations': isOpenForDonations, // Add to JSON
     };
   }

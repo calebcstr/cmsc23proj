@@ -14,4 +14,13 @@ class DonationDrive {
     required this.organizationId, // Include organizationId in the constructor
   });
 
+  factory DonationDrive.fromJson(Map<String, dynamic> json) {
+    return DonationDrive(
+      description: json['description'],
+      donationDriveId: json['donationDriveId'],
+      name: json['name'],
+      organizationId: json['organizationId'],
+    );
+  }
+
 }

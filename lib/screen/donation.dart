@@ -22,7 +22,7 @@ class DonationSum extends StatelessWidget {
       child: Column(
       children: [
           const Icon(Icons.person),
-          Text('DONATION FOR ${donationentry.orgName}',
+          Text('DONATION',
           style: const TextStyle(fontSize: 20.0, 
           fontWeight: FontWeight.bold,
           fontStyle: FontStyle.italic),

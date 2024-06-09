@@ -4,12 +4,13 @@ import 'package:qr_flutter/qr_flutter.dart';
 import "package:provider/provider.dart";
 import '../../model/donor_model.dart';
 import '../../provider/donation_provider.dart';
-import 'qr_image.dart';
-import 'profile.dart';
+import '../../provider/auth_provider.dart';
 
 class DonationPage extends StatefulWidget {
-  final String? org;
-  const DonationPage({super.key, this.org});
+  final String? orgID;
+  final String? driveID;
+  final String? email;
+  const DonationPage({super.key, this.orgID, this.driveID, this.email});
   static const routename = '/donationPage';
 
   @override
@@ -17,6 +18,7 @@ class DonationPage extends StatefulWidget {
 }
 
 class _DonationPageState extends State<DonationPage> {
+
 //initializing constants
   bool save = false;
   bool summary = false;
@@ -76,7 +78,7 @@ class _DonationPageState extends State<DonationPage> {
   Donation? donation;
     void addEntry(BuildContext context) {
       donation = Donation(
-        orgName: widget.org, 
+        email: widget.email,
         checkFood: food,
         checkClothes: clothes,
         checkCash: cash,
@@ -87,7 +89,8 @@ class _DonationPageState extends State<DonationPage> {
         contactNo: _number.text,
         weight: _weight.text,
         status: "Pending",
-        organizationId: 'get it from the donation drive'); //GET IT FROM DONO DRIVE
+        organizationId: widget.orgID!,
+        driveId: widget.driveID!);
         context.read<DonationList>().addDonation(donation!);
         Navigator.pop(context);
   }
@@ -132,12 +135,13 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
 
   @override
   Widget build(BuildContext context) {
+  
 //entire slambook widget
     return Scaffold(
       appBar: AppBar(
         title: const Text('Donation Portal'),
       ),
-      drawer: Drawer( //Creates a drawer for the user
+      /*drawer: Drawer( //Creates a drawer for the user
         child: Padding(
           padding: const EdgeInsets.only(top: 40),
           child: ListView(
@@ -164,13 +168,13 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Homepage()));
+                            builder: (context) => Homepage()));
                   },
               ),
             ],
           ),
         ),
-      ),       
+      ),*/       
         body: 
         Form(
        key: _key,
@@ -316,7 +320,7 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
         Visibility(
           visible: summary,
           child: Column (children: [
-            Text('DONATION FOR ${widget.org!}',
+            const Text('DONATION',
           style: const TextStyle(fontSize: 20.0, 
           fontWeight: FontWeight.bold,
           fontStyle: FontStyle.italic),

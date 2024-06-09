@@ -241,7 +241,7 @@ class _OrgPageState extends State<OrgPage> {
                             final donation = donations[index];
                             return ListTile(
                               title: Text('Donation ID: ${donation.id}'),
-                              subtitle: Text('Status: ${donation['status']}'),
+                              subtitle: Text('Status: ${donation['Status']}'),
                               onTap: () {
                                 Navigator.push(
                                   context,

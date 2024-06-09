@@ -1,3 +1,4 @@
+import 'package:cmsc23proj/screen/donor_view/orgpage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,6 @@ import '../screen/donor_view/donor.dart';
 import '../screen/donor_view/homepage.dart';
 import '../screen/donor_view/profile.dart';
 import '../provider/donation_drive_provider.dart';
-import '../screen/org_view/add_donation_drive.dart';
 import '../provider/organization_provider.dart';
 import '../api/firebase_auth_api.dart';
 
@@ -26,7 +26,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => DonationList()),
         ChangeNotifierProvider(create: ((context) => DonationDriveProvider())),
         ChangeNotifierProvider(create: ((context) => OrganizationIdProvider())),
-        ChangeNotifierProvider(create: ((context) => OrganizationProvider())),
+        ChangeNotifierProvider(create: ((context) => OrganizationList())),
+        ChangeNotifierProvider(create: ((context) => DonorProvider()))
       ],
       child: const MyApp(),
     ),
@@ -44,9 +45,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
-        '/donor_main': (context) => const Homepage(),
+        '/donor_main': (context) => Homepage(),
         '/donor_donationPage': (context) => const DonationPage(),
-        '/donor_profile': (context) => const Profile(), 
+        '/donor_orgpage': (context) => const Orgpage(), 
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
