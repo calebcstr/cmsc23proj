@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "week9_authentication" "\0"
+            VALUE "FileDescription", "cmsc23proj" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "week9_authentication" "\0"
+            VALUE "InternalName", "cmsc23proj" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "week9_authentication.exe" "\0"
-            VALUE "ProductName", "week9_authentication" "\0"
+            VALUE "OriginalFilename", "cmsc23proj.exe" "\0"
+            VALUE "ProductName", "cmsc23proj" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

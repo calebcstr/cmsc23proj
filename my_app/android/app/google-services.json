@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "475659213285",
-    "project_id": "cmsc23-todo-app-mohadi",
-    "storage_bucket": "cmsc23-todo-app-mohadi.appspot.com"
+    "project_number": "1051617584787",
+    "project_id": "cmsc23-project-149f1",
+    "storage_bucket": "cmsc23-project-149f1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:475659213285:android:f5dc47867794c2acc8f70c",
+        "mobilesdk_app_id": "1:1051617584787:android:59d8d533bc1134b7c78f66",
         "android_client_info": {
-          "package_name": "com.example.week9_authentication"
+          "package_name": "com.example.cmsc23proj"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDTJfzIIIDzieyJkhDo7oQVeQGoR_po9Fs"
+          "current_key": "AIzaSyD1B54V3mLYpnQ9npNPIZDR8afpfUV8Srw"
         }
       ],
       "services": {
