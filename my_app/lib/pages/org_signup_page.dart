@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../providers/auth_provider.dart';
 
 class OrgSignUpPage extends StatefulWidget {
-  const OrgSignUpPage({Key? key}) : super(key: key);
+  const OrgSignUpPage({super.key});
 
   @override
   State<OrgSignUpPage> createState() => _SignUpState();
@@ -12,8 +15,66 @@ class OrgSignUpPage extends StatefulWidget {
 class _SignUpState extends State<OrgSignUpPage> {
   final _formKey = GlobalKey<FormState>();
   String? organizationName;
+  String? description;
+  String? email;
+  String? password;
+  String? address;
+  String? contactNo;
   String? proofOfLegitimacy;
   String? errorMessage;
+  bool isLoading = false;
+  File? _proofImage;
+
+  Future<void> _choosePhotoProof() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      setState(() {
+        _proofImage = imageFile;
+      });
+
+      // Upload image to Firebase Storage
+      try {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('photo_proofs/${DateTime.now().millisecondsSinceEpoch}.jpg');
+        final uploadTask = storageRef.putFile(imageFile);
+        final snapshot = await uploadTask.whenComplete(() {});
+        final imageUrl = await snapshot.ref.getDownloadURL();
+
+        setState(() {
+          proofOfLegitimacy = imageUrl;
+        });
+      } catch (e) {
+        print('Error uploading image: $e');
+      }
+    }
+  }
+
+  void _showPhotoProofDialog(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Image.network(imageUrl),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close', style: TextStyle(color: Colors.black)),
+            ),
+          ],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          backgroundColor: Colors.white,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +90,24 @@ class _SignUpState extends State<OrgSignUpPage> {
               children: [
                 heading,
                 nameField,
+                descriptionField,
+                emailField,
+                passwordField,
+                addressField,
+                contactNoField,
                 proofField,
+                if (proofOfLegitimacy != null)
+                  InkWell(
+                    onTap: () => _showPhotoProofDialog(proofOfLegitimacy!),
+                    child: Text(
+                      'View Photo Proof',
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
                 errorMessage != null ? signUpErrorMessage : Container(),
-                submitButton,
+                isLoading ? const CircularProgressIndicator() : submitButton,
               ],
             ),
           ),
@@ -44,19 +120,27 @@ class _SignUpState extends State<OrgSignUpPage> {
         padding: EdgeInsets.only(bottom: 30),
         child: Text(
           "Sign Up as an Organization",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black), // Black color for heading
         ),
       );
 
   Widget get nameField => Padding(
-        padding: const EdgeInsets.only(bottom: 30),
+        padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
             labelText: "Organization Name",
             hintText: "Enter the organization name",
           ),
-          onSaved: (value) => setState(() => organizationName = value),
+          onSaved: (value) => organizationName = value,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return "Please enter the organization name";
@@ -66,54 +150,223 @@ class _SignUpState extends State<OrgSignUpPage> {
         ),
       );
 
+  Widget get descriptionField => Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
+            labelText: "Description",
+            hintText: "Enter the organization description",
+          ),
+          onSaved: (value) => description = value,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter the organization description";
+            }
+            return null;
+          },
+        ),
+      );
+
+  Widget get emailField => Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
+            labelText: "Email",
+            hintText: "Enter an email",
+          ),
+          onSaved: (value) => setState(() => email = value),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter an email";
+            }
+            return null;
+          },
+        ),
+      );
+
+  Widget get passwordField => Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
+            labelText: "Password",
+            hintText: "At least 6 characters",
+          ),
+          obscureText: true,
+          onSaved: (value) => setState(() => password = value),
+          validator: (value) {
+            if (value == null || value.isEmpty || value.length < 6) {
+              return "Please enter a valid password with at least 6 characters";
+            }
+            return null;
+          },
+        ),
+      );
+
+  Widget get addressField => Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
+            labelText: "Address",
+            hintText: "Enter your address",
+          ),
+          onSaved: (value) => setState(() => address = value),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter your address";
+            }
+            return null;
+          },
+        ),
+      );
+
+  Widget get contactNoField => Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
+            labelText: "Contact No",
+            hintText: "Enter your contact number",
+          ),
+          onSaved: (value) => setState(() => contactNo = value),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter your contact number";
+            }
+            return null;
+          },
+        ),
+      );
+
   Widget get proofField => Padding(
-        padding: const EdgeInsets.only(bottom: 30),
+        padding: const EdgeInsets.only(bottom: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Proof of Legitimacy",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
             ElevatedButton(
-              onPressed: () {
-                // TODO
-              },
-              child: Text("Choose File"),
+              onPressed: _choosePhotoProof,
+              child: Text(
+                'Choose Photo Proof (Required)',
+                style: TextStyle(
+                  color: Colors.black, // Font color of the button text
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[200], // Button color
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50), // Custom border radius
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 20), // Custom padding
+                minimumSize: Size(350, 0), // Minimum button width
+              ),
             ),
           ],
         ),
       );
 
-  Widget get submitButton => ElevatedButton(
-        onPressed: () async {
-          if (_formKey.currentState!.validate()) {
-            _formKey.currentState!.save();
+  Widget get submitButton => Padding(
+  padding: const EdgeInsets.symmetric(vertical: 20.0), // Adjust the padding as needed
+  child: ElevatedButton(
+    onPressed: () async {
+      if (_formKey.currentState!.validate()) {
+        _formKey.currentState!.save();
+        setState(() {
+          isLoading = true;
+        });
+        try {
+          String? result = await context
+              .read<UserAuthProvider>()
+              .authService
+              .signUpOrganization(
+                organizationName!,
+                description!,
+                email!,
+                password!,
+                address!,
+                contactNo!,
+                proofOfLegitimacy!,
+              );
+          if (mounted) {
             Navigator.pop(context);
+          } else {
+            setState(() {
+              errorMessage = result;
+            });
           }
-        },
-        child: const Text("Sign Up"),
-      );
-
-  Widget get signUpErrorMessage {
-    String message = errorMessage ?? "An error occurred";
-    switch (errorMessage) {
-      case 'invalid-email':
-        message = 'Invalid email format!';
-        break;
-      case 'weak-password':
-        message = 'Weak password, try a stronger one!';
-        break;
-      case 'email-already-in-use':
-        message = 'Email already in use, please use a different email!';
-        break;
-    }
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 30),
-      child: Text(
-        message,
-        style: const TextStyle(color: Colors.red),
+        } catch (e) {
+          setState(() {
+            errorMessage = 'An unexpected error occurred';
+          });
+        } finally {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      }
+    },
+    child: Text(
+      'Sign Up',
+      style: TextStyle(
+        color: Colors.white, // Font color of the button text
       ),
-    );
-  }
+    ),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.black, // Custom button color
+      padding: const EdgeInsets.symmetric(vertical: 15), // Custom padding
+      minimumSize: Size(100, 0), // Minimum button width
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50), // Custom border radius
+        ),
+      ),
+    ),
+  );
+
+
+  Widget get signUpErrorMessage => Text(
+        errorMessage ?? "",
+        style: const TextStyle(color: Colors.red),
+      );
 }

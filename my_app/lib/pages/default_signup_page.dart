@@ -4,7 +4,7 @@ import 'org_signup_page.dart';
 import '../providers/auth_provider.dart';
 
 class DefSignUpPage extends StatefulWidget {
-  const DefSignUpPage({Key? key}) : super(key: key);
+  const DefSignUpPage({super.key});
 
   @override
   State<DefSignUpPage> createState() => _SignUpState();
@@ -12,12 +12,14 @@ class DefSignUpPage extends StatefulWidget {
 
 class _SignUpState extends State<DefSignUpPage> {
   final _formKey = GlobalKey<FormState>();
-  String? Name;
-  String? Username;
-  String? Password;
-  String? Address;
-  String? ContactNo;
+  String? name;
+  String? email;
+  String? password;
+  String? address;
+  String? workAddress;
+  String? contactNo;
   String? errorMessage;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +35,14 @@ class _SignUpState extends State<DefSignUpPage> {
               children: [
                 heading,
                 nameField,
-                usernameField,
+                emailField,
                 passwordField,
                 addressField,
+                workdAddressField,
                 contactNoField,
                 errorMessage != null ? signUpErrorMessage : Container(),
-                submitButton,
-                signUpButton
+                isLoading ? const CircularProgressIndicator() : submitButton,
+                signUpButton,
               ],
             ),
           ),
@@ -52,19 +55,27 @@ class _SignUpState extends State<DefSignUpPage> {
         padding: EdgeInsets.only(bottom: 30),
         child: Text(
           "Sign Up as a Donor",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black), // Black color for heading
         ),
       );
 
   Widget get nameField => Padding(
-        padding: const EdgeInsets.only(bottom: 30),
+        padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
             labelText: "Name",
             hintText: "Enter your full name",
           ),
-          onSaved: (value) => setState(() => Name = value),
+          onSaved: (value) => setState(() => name = value),
           validator: (value) {
             if (value == null || value.isEmpty) {
               return "Please enter your full name";
@@ -74,18 +85,26 @@ class _SignUpState extends State<DefSignUpPage> {
         ),
       );
 
-  Widget get usernameField => Padding(
-        padding: const EdgeInsets.only(bottom: 30),
+  Widget get emailField => Padding(
+        padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: "Username",
-            hintText: "Enter a username",
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
+            labelText: "Email",
+            hintText: "Enter an email",
           ),
-          onSaved: (value) => setState(() => Username = value),
+          onSaved: (value) => setState(() => email = value),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return "Please enter a username";
+              return "Please enter an email";
             }
             return null;
           },
@@ -93,15 +112,23 @@ class _SignUpState extends State<DefSignUpPage> {
       );
 
   Widget get passwordField => Padding(
-        padding: const EdgeInsets.only(bottom: 30),
+        padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
             labelText: "Password",
             hintText: "At least 6 characters",
           ),
           obscureText: true,
-          onSaved: (value) => setState(() => Password = value),
+          onSaved: (value) => setState(() => password = value),
           validator: (value) {
             if (value == null || value.isEmpty || value.length < 6) {
               return "Please enter a valid password with at least 6 characters";
@@ -112,14 +139,22 @@ class _SignUpState extends State<DefSignUpPage> {
       );
 
   Widget get addressField => Padding(
-        padding: const EdgeInsets.only(bottom: 30),
+        padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
             labelText: "Address",
             hintText: "Enter your address",
           ),
-          onSaved: (value) => setState(() => Address = value),
+          onSaved: (value) => setState(() => address = value),
           validator: (value) {
             if (value == null || value.isEmpty) {
               return "Please enter your address";
@@ -129,15 +164,43 @@ class _SignUpState extends State<DefSignUpPage> {
         ),
       );
 
+  Widget get workdAddressField => Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
+            labelText: "Work Address",
+            hintText: "Enter your work address",
+          ),
+          onSaved: (value) => setState(() => workAddress = value),
+        ),
+      );
+
   Widget get contactNoField => Padding(
         padding: const EdgeInsets.only(bottom: 30),
         child: TextFormField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black), // Custom active color
+              borderRadius: BorderRadius.circular(50), // Custom border radius
+            ),
+            filled: true, // Set to true to fill the background color
+            fillColor: Colors.grey[50], // Background color of the input field
             labelText: "Contact No",
             hintText: "Enter your contact number",
           ),
-          onSaved: (value) => setState(() => ContactNo = value),
+          onSaved: (value) => setState(() => contactNo = value),
           validator: (value) {
             if (value == null || value.isEmpty) {
               return "Please enter your contact number";
@@ -147,14 +210,50 @@ class _SignUpState extends State<DefSignUpPage> {
         ),
       );
 
-  Widget get submitButton => ElevatedButton(
+   Widget get submitButton => ElevatedButton(
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
-            Navigator.pop(context);
+            setState(() {
+              isLoading = true;
+            });
+            try {
+              String? result = await context
+                  .read<UserAuthProvider>()
+                  .authService
+                  .signUpDonor(name!, email!, password!, address!, workAddress!, contactNo!);
+              if (mounted) {
+                Navigator.pop(context);
+              } else {
+                setState(() {
+                  errorMessage = result;
+                });
+              }
+            } catch (e) {
+              setState(() {
+                errorMessage = 'An unexpected error occurred';
+              });
+            } finally {
+              setState(() {
+                isLoading = false;
+              });
+            }
           }
         },
-        child: const Text("Sign Up"),
+        child: Text(
+          'Sign Up',
+          style: TextStyle(
+            color: Colors.white, // Font color of the button text
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black, // Custom button color
+          padding: const EdgeInsets.symmetric(vertical: 15), // Custom padding
+          minimumSize: Size(100, 0), // Minimum button width
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50), // Custom border radius
+          ),
+        ),
       );
 
   Widget get signUpButton => Padding(
