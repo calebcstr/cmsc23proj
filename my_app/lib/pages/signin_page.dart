@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import './admin_page.dart';
 // import './donor_page.dart';
 // import './organization_home_page.dart';
-import '../providers/auth_provider.dart';
+import '../provider/auth_provider.dart';
 import 'default_signup_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -224,7 +224,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.of(context).pop();
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => AdminPage()),
+                        MaterialPageRoute(builder: (context) => Placeholder()),
                       );
                     },
                     child: const Text('OK', style: TextStyle(color: Colors.black)),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'org_signup_page.dart';
-import '../providers/auth_provider.dart';
+import '../provider/auth_provider.dart';
 
 class DefSignUpPage extends StatefulWidget {
   const DefSignUpPage({super.key});
