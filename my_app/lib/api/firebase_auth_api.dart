@@ -28,8 +28,10 @@ class FirebaseAuthApi {
       await firestore.collection('donors').doc(userCredential.user!.uid).set({
         'name': name,
         'email': email,
-        'address': address,
-        'workAddress': workAddress,
+        'addresses': [{'type' : 'main',
+                      'address': address},
+                       {'type' : 'work', 
+                       'address' : workAddress}],
         'contactNo': contactNo,
       });
 
@@ -51,6 +53,7 @@ class FirebaseAuthApi {
       String uid = userCredential.user!.uid;
 
       await firestore.collection('organizations').doc(uid).set({
+        'organizationId': uid,
         'organizationName': organizationName,
         'description': description,
         'email': email,

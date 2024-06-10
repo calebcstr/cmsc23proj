@@ -60,6 +60,7 @@ class _OrgpageState extends State<Orgpage> {
                 child: ListTile(
                   title: Text(organization.organizationName),
                   leading: const Icon(Icons.business),
+                  subtitle: Text('About: ${organization.description}'),
                   onTap: () {
                     Navigator.push(
                       context,

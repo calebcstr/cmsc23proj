@@ -56,6 +56,19 @@ Stream<DocumentSnapshot> getDonation(String donationId) {
     }
   }
 
+  Future<void> completeDonationStatus(String donationId, String newStatus, String? imageURL) async {
+    try {
+      await db.collection('Donation').doc(donationId).update({
+        'Status': newStatus,
+        if (imageURL != null) 'photoOfproof': imageURL,
+      });
+      print('Donation status updated successfully.');
+    } catch (e) {
+      print('Error updating donation status: $e');
+      throw Exception('Failed to update donation status.');
+    }
+  }
+
    Future<String> getStatus(String donationId) async {
     try {
       DocumentSnapshot donationDoc = await db.collection('Donation').doc(donationId).get();

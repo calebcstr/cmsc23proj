@@ -48,7 +48,7 @@ class _EditStatusPageState extends State<EditStatusPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Radio buttons for status options
-            ...['Pending', 'Confirmed', 'Scheduled for Pick-up', 'Complete', 'Cancelled']
+            ...['Pending', 'Confirmed', 'Scheduled for Pick-up', 'Cancelled']
                 .map((status) => RadioListTile(
                       title: Text(status),
                       value: status,

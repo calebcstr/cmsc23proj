@@ -22,7 +22,7 @@ class FirebaseOrganizationAPI {
   Stream<List<Organization>> getAllOpenOrganizations() {
     return db
         .collection('organizations')
-        .where('isOpenForDonations', isEqualTo: true)
+        .where('isOpen', isEqualTo: true)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -30,10 +30,11 @@ class FirebaseOrganizationAPI {
         return Organization(
           organizationId: data['organizationId'] ?? '',
           organizationName: data['organizationName'] ?? '',
+          description: data['description'] ?? '',
           email: data['email'] ?? '',
           address: data['address'] ?? '',
           contact: data['contactNo'] ?? '',
-          isOpenForDonations: data['isOpenForDonations'] ?? false,
+          isOpenForDonations: data['isOpen'] ?? false,
         );
       }).toList();
     });
@@ -49,10 +50,11 @@ class FirebaseOrganizationAPI {
         return Organization(
           organizationId: data['organizationId'] ?? '',
           organizationName: data['organizationName'] ?? '',
+          description: data['description'] ?? '',
           email: data['email'] ?? '',
           address: data['address'] ?? '',
           contact: data['contactNo'] ?? '',
-          isOpenForDonations: data['isOpenForDonations'] ?? false,
+          isOpenForDonations: data['isOpen'] ?? false,
         );
       }).toList();
     });

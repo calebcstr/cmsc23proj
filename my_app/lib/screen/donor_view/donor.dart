@@ -1,10 +1,11 @@
-import 'homepage.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import "package:provider/provider.dart";
 import '../../model/donor_model.dart';
 import '../../provider/donation_provider.dart';
 import '../../provider/auth_provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class DonationPage extends StatefulWidget {
   final String? orgID;
@@ -30,6 +31,8 @@ class _DonationPageState extends State<DonationPage> {
   bool cash = false;
   bool necessities = false;
   bool logistics = false;
+
+  String? _selectedAddress;
 
 //Text Controllers
   final TextEditingController _date = TextEditingController();
@@ -73,6 +76,8 @@ class _DonationPageState extends State<DonationPage> {
     _address.addListener(() {
       print("Latest Value: ${_address.text}");
     });
+    final donorProvider = Provider.of<DonorProvider>(context, listen: false);
+    donorProvider.fetchDonorDetails(widget.email!);
   }
 
   Donation? donation;
@@ -85,12 +90,13 @@ class _DonationPageState extends State<DonationPage> {
         checkNecessities: necessities,
         checkLogistics: logistics,
         date: _date.text,
-        address: _address.text,
+        address: _selectedAddress,
         contactNo: _number.text,
         weight: _weight.text,
         status: "Pending",
         organizationId: widget.orgID!,
-        driveId: widget.driveID!);
+        driveId: widget.driveID!,
+        photoOfdonation: photoURL);
         context.read<DonationList>().addDonation(donation!);
         Navigator.pop(context);
   }
@@ -100,83 +106,98 @@ class _DonationPageState extends State<DonationPage> {
             title: Text(title),
             subtitle: Text(desc),
             value: newValue,
-            onChanged: (bool? value) {
-              setState(() {
-                newValue = value!;
-              });
-            }
+            onChanged: onChanged,
           );
 }
 
-Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
-  return Column(
-    children: [
-      Center(
-        child: Text(title, overflow: TextOverflow.ellipsis),
-      ),
-      Center(
-        child: Checkbox(
-          value: value,
-          onChanged: onChanged,
-        ),
-      ),
-    ],
-  );
-}
+    File? _proofImage;
+    String? photoURL;
+    String? errorMessage;
+    bool isLoading = false;
 
-  String? _validateOther(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter other items to donate';
+  Future<void> _choosePhotoProof() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      setState(() {
+        _proofImage = imageFile;
+      });
+
+      // Upload image to Firebase Storage
+      try {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('photo_proofs/${DateTime.now().millisecondsSinceEpoch}.jpg');
+        final uploadTask = storageRef.putFile(imageFile);
+        final snapshot = await uploadTask.whenComplete(() {});
+        if (snapshot.state == TaskState.success) {
+          final imageUrl = await snapshot.ref.getDownloadURL();
+          setState(() {
+            photoURL = imageUrl;
+          });
+        } else {
+          throw FirebaseException(
+            plugin: 'firebase_storage',
+            message: 'Upload failed with state: ${snapshot.state}',
+          );
+        }
+      } on FirebaseException catch (e) {
+        setState(() {
+          errorMessage = 'Error uploading image: ${e.message}';
+        });
+        print('Error uploading image: ${e.message}');
+      } catch (e) {
+        setState(() {
+          errorMessage = 'Error uploading image: $e';
+        });
+        print('Error uploading image: $e');
+      }
+    } else {
+      setState(() {
+        errorMessage = 'No image selected.';
+      });
     }
-    
-    return null;
+  }
+
+  void _showPhotoProofDialog(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Image.network(imageUrl),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close', style: TextStyle(color: Colors.black)),
+            ),
+          ],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          backgroundColor: Colors.white,
+        );
+      },
+    );
   }
 
 
   @override
   Widget build(BuildContext context) {
-  
-//entire slambook widget
     return Scaffold(
+      
       appBar: AppBar(
         title: const Text('Donation Portal'),
-      ),
-      /*drawer: Drawer( //Creates a drawer for the user
-        child: Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: [
-              ListTile(
-                  title: const Text('Profile Page'),
-                  onTap: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Profile()));
-                  }),
-              ListTile(
-                title: const Text('Donation Box'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Homepage'),
-                onTap: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Homepage()));
-                  },
-              ),
-            ],
-          ),
-        ),
-      ),*/       
-        body: 
-        Form(
+      ),     
+        body: Consumer<DonorProvider>(
+          builder: (context, provider, child) {
+          if (provider.name.isEmpty && provider.email.isEmpty) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+        return Form(
        key: _key,
        child: ListView(
               children: [
@@ -192,16 +213,28 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
             )),
 
 
-        buildCheckboxRow('Food', 'Donate food items', food, (bool? cash) {
+        buildCheckboxRow('Food', 'Donate food items', food, (bool? value) {
+          setState(() {
+            food = value!;
+              });
           }),
 
         buildCheckboxRow('Clothes', 'Donate any used or clothes that you are not using anymore', clothes, (bool? value) {
+          setState(() {
+            clothes = value!;
+              });
           }),
 
-        buildCheckboxRow('Cash', 'Donate amount of cash', cash, (bool? cash) {
+        buildCheckboxRow('Cash', 'Donate amount of cash', cash, (bool? value) {
+          setState(() {
+            cash = value!;
+              });
           }),
 
         buildCheckboxRow('Necessities', 'Donate any necessities from hygiene kits and medications', necessities, (bool? value) {
+          setState(() {
+            necessities = value!;
+              });
           }),
 
         Divider(
@@ -246,7 +279,6 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
               print(_weight.text);
             },
             controller: _weight,
-            //validator: _validateName
         )),
 
         Padding(
@@ -285,19 +317,37 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
         )),
         Padding(
           padding: const EdgeInsets.all(10),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: "Enter Address (for pickup)",
-              labelText: "Pickup Address",
-            ),
-            onChanged: (String value) {
-              _address.text = value;
-              print(_address.text);
-            },
-            controller: _address,
-        )),
-])),
+          child: 
+          DropdownButton<String>(
+                      value: _selectedAddress,
+                      hint: Text('Address'),
+                      items: provider.addresses.map<DropdownMenuItem<String>>((address) {
+                        return DropdownMenuItem<String>(
+                          value: address['address'],
+                          child: Text('${address['type']}: ${address['address']}'),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedAddress = newValue;
+                        });
+                      },
+                    )),
+])),                  proofField,
+                if (photoURL != null)
+                  InkWell(
+                    onTap: () => _showPhotoProofDialog(photoURL!),
+                    child: Text(
+                      'View Photo',
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                if (errorMessage != null)
+                              signUpErrorMessage
+                            else
+                              Container(),
 
 
       Padding(
@@ -436,7 +486,7 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
           textAlign: TextAlign.left,
         )),
         Expanded(
-          child: Text(_address.text,
+          child: Text(_selectedAddress ?? "N/A",
           style: TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
@@ -449,7 +499,7 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
           textAlign: TextAlign.left,
         )),
         Expanded(
-          child: Text(_address.text,
+          child: Text(_number.text,
           style: TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
@@ -499,6 +549,37 @@ Widget buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
     
       
       
-      ));// This trailing comma makes auto-formatting nicer for build methods.
+      );}}));// This trailing comma makes auto-formatting nicer for build methods.
   }
+
+    Widget get proofField => Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ElevatedButton(
+              onPressed: _choosePhotoProof,
+              child: Text(
+                'Photo of Donations (Optional)',
+                style: TextStyle(
+                  color: Colors.black, // Font color of the button text
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[200], // Button color
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50), // Custom border radius
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 20), // Custom padding
+                minimumSize: Size(350, 0), // Minimum button width
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Widget get signUpErrorMessage => Text(
+        errorMessage ?? "",
+        style: const TextStyle(color: Colors.red),
+      );
 }

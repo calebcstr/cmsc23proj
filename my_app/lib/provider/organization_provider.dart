@@ -80,7 +80,7 @@ class OrganizationProvider extends ChangeNotifier {
         _email = data['email'] ?? '';
         _address = data['address'] ?? '';
         _contact = data['contactNo'] ?? '';
-        _isOpenForDonations = data['isOpenForDonations'] ?? false;
+        _isOpenForDonations = data['isOpen'] ?? false;
         notifyListeners();
       } 
     } catch (e) {
@@ -97,7 +97,7 @@ class OrganizationProvider extends ChangeNotifier {
 
     for (DocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
       await doc.reference.update({
-        'isOpenForDonations': status,
+        'isOpen': status,
       });
     }
 

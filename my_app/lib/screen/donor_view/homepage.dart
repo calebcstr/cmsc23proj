@@ -254,8 +254,9 @@ class _HomepageState extends State<Homepage> {
               return Dismissible(
                 key: Key(organization.organizationId.toString()),
                 child: ListTile(
-                  title: Text(organization.organizationName),
+                  title: Text(organization.organizationName),                
                   leading: const Icon(Icons.business),
+                  subtitle: Text('About: ${organization.description}')
                 ),
               );
             },

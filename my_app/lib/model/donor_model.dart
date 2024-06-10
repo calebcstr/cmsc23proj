@@ -15,6 +15,8 @@ class Donation {
   String? status;
   final String organizationId;
   final String driveId;
+  String? photoOfdonation;
+  String? photoOfproof;
 
   Donation({
     required this.email,
@@ -30,6 +32,8 @@ class Donation {
     this.status,
     required this.organizationId,
     required this.driveId,
+    this.photoOfdonation,
+    this.photoOfproof,
   });
 
   factory Donation.fromJson(Map<String, dynamic> json) {
@@ -46,7 +50,9 @@ class Donation {
       weight: json['Weight'],
       status: json['Status'],
       organizationId: json['OrganizationId'],
-      driveId: json['DriveId']
+      driveId: json['DriveId'],
+      photoOfdonation: json['photoOfdonation'],
+      photoOfproof: json['photoOfproof']
     );
   }
 
@@ -69,7 +75,9 @@ class Donation {
       'Weight': donation.weight,
       'Status': donation.status,
       'OrganizationId': donation.organizationId,
-      'DriveId': donation.driveId
+      'DriveId': donation.driveId,
+      'photoOfdonation':photoOfdonation,
+      'photoOfproof':photoOfproof
     };
   }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 class Organization {
   final String organizationId;
       final String organizationName;
+      final String description;
       final String email;
       final String address;
       final String contact;
@@ -11,6 +12,7 @@ class Organization {
   Organization({
     required this.organizationId,
     required this.organizationName,
+    required this.description,
     required this.email,
     required this.address,
     required this.contact,
@@ -21,10 +23,11 @@ class Organization {
     return Organization(
       organizationId: json['organizationId'],
       organizationName: json['organizationName'],
+      description: json['description'],
       email: json['email'],
       address: json['address'],
       contact: json['contact'],
-      isOpenForDonations: json['isOpenForDonations'] ?? true, // Handle missing field
+      isOpenForDonations: json['isOpen'] ?? true, // Handle missing field
     );
   }
 
@@ -37,10 +40,11 @@ class Organization {
     return {
       'organizationId': organizationId,
       'organization Name': organizationName,
+      'description': description,
       'email': email,
       'address': address,
       'contactNo': contact,
-      'isOpenForDonations': isOpenForDonations, // Add to JSON
+      'isOpen': isOpenForDonations, // Add to JSON
     };
   }
 }

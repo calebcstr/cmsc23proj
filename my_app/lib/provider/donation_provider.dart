@@ -23,7 +23,11 @@ class DonationList with ChangeNotifier {
 
 
 
-  Future<void> updateDonationStatus(String id, String status)  {
+  Future<void> completeDonationStatus(String id, String status, String imageURL)  {
+    return firebaseService.completeDonationStatus(id,status,imageURL);
+  }
+
+    Future<void> updateDonationStatus(String id, String status)  {
     return firebaseService.updateDonationStatus(id,status);
   }
 
@@ -68,13 +72,13 @@ class DonorProvider with ChangeNotifier {
   
   String _name = '';
   String _email = '';
-  String _address = '';
   String _contact = '';
+  List<Map<String, dynamic>> _addresses = [];
 
   String get name => _name;
   String get email => _email;
-  String get address => _address;
   String get contact => _contact;
+  List<Map<String, dynamic>> get addresses => _addresses;
 
 Future<void> fetchDonorDetails(String email) async {
   try {
@@ -86,14 +90,51 @@ Future<void> fetchDonorDetails(String email) async {
       final data = snapshot.docs.first.data() as Map<String, dynamic>;
       _name = data['name'] ?? '';
       _email = data['email'] ?? '';
-      _address = data['address'] ?? '';
       _contact = data['contactNo'] ?? '';
-      print("Fetched details: $_name, $_email, $_address, $_contact");
+      _addresses = List<Map<String, dynamic>>.from(data['addresses'] ?? []);
+      print("Fetched details: $_name, $_email, $_addresses, $_contact");
       notifyListeners();
     }
   } catch (e) {
     print("Error fetching donor details: $e");
   }
 }
+
+  Future<void> addAddress(String email, String type, String newAddress) async {
+    try {
+      QuerySnapshot snapshot = await db.collection('donors')
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        print("No donor document found for email: $email");
+        return;
+      }
+
+      DocumentReference donorRef = snapshot.docs.first.reference;
+
+      print("Adding address: $newAddress of type: $type for user: $email");
+
+      await donorRef.update({
+        'addresses': FieldValue.arrayUnion([
+          {
+            'type': type,
+            'address': newAddress,
+          }
+        ])
+      });
+
+      _addresses.add({
+        'type': type,
+        'address': newAddress,
+      });
+      notifyListeners();
+
+      print("Address added successfully");
+
+    } catch (e) {
+      print("Error adding address: $e");
+    }
+  }
 
 } 

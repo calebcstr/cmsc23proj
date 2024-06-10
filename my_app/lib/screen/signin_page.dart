@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cmsc23proj/screen/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './admin_page.dart';
-import './donor_view/homepage.dart';
-import './org_view/org.dart';
 import '../provider/auth_provider.dart';
 import 'default_signup_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'donor_view/homepage.dart';
+import 'org_view/org.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -225,7 +224,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.of(context).pop();
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => AdminPage()),
+                        MaterialPageRoute(builder: (contAext) => AdminPage()),
                       );
                     },
                     child: const Text('OK', style: TextStyle(color: Colors.black)),

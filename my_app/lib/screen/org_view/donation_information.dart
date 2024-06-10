@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../provider/donation_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,6 +20,10 @@ class _DonationInfoPageState extends State<DonationInfoPage> {
   String? _currentStatus;
   String? _newStatus;
   bool _canUpdate = true;
+  File? _proofImage;
+  String? proofImageURL;
+  String? errorMessage;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -35,6 +43,60 @@ class _DonationInfoPageState extends State<DonationInfoPage> {
     });
   }
 
+  Future<void> _choosePhotoProof() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      setState(() {
+        _proofImage = imageFile;
+      });
+
+      // Upload image to Firebase Storage
+      try {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('proof_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+        final uploadTask = storageRef.putFile(imageFile);
+        final snapshot = await uploadTask.whenComplete(() {});
+        final imageUrl = await snapshot.ref.getDownloadURL();
+
+        setState(() {
+          proofImageURL = imageUrl;
+        });
+      } catch (e) {
+        print('Error uploading image: $e');
+      }
+    }
+  }
+
+  void _showProofDialog(BuildContext context, String? proofUrl) {
+    if (proofUrl != null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Photo of Donation'),
+            content: Image.network(proofUrl),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Close', style: TextStyle(color: Colors.black)),
+              ),
+            ],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            backgroundColor: Colors.white,
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final donationProvider = Provider.of<DonationList>(context, listen: false);
@@ -43,7 +105,8 @@ class _DonationInfoPageState extends State<DonationInfoPage> {
       appBar: AppBar(
         title: Text('Donation Information'),
       ),
-      body: StreamBuilder<DocumentSnapshot>(
+      body: ListView(
+        children: [StreamBuilder<DocumentSnapshot>(
         stream: donationProvider.getDonationById(widget.donationId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -71,6 +134,48 @@ class _DonationInfoPageState extends State<DonationInfoPage> {
                   Text('Contact Number: ${donationData['Contact Number']}', style: TextStyle(fontFamily: 'Roboto')),
                   Text('Weight: ${donationData['Weight']}', style: TextStyle(fontFamily: 'Roboto')),
                   SizedBox(height: 20.0),
+                  if (donationData['photoOfdonation'] != null)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Photo of Donation:', style: TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.bold)),
+                        GestureDetector(
+                          onTap: () => _showProofDialog(context, donationData['photoOfdonation']),
+                          child: Image.network(
+                            donationData['photoOfdonation'],
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ],
+                    ),
+                  SizedBox(height: 20.0),
+                  if (_newStatus == 'Complete' && proofImageURL == null)
+                    Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: _choosePhotoProof,
+                          child: Text('Upload Proof of Legitimacy'),
+                        ),
+                        if (errorMessage != null)
+                          Text(
+                            errorMessage!,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        if (_proofImage != null)
+                          InkWell(
+                            onTap: () => _showProofDialog(context, proofImageURL!),
+                            child: Text(
+                              'View Photo Proof',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ...['Pending', 'Confirmed', 'Scheduled for Pick-up', 'Complete', 'Cancelled']
                       .map((status) => RadioListTile(
                             title: Text(status),
@@ -87,11 +192,21 @@ class _DonationInfoPageState extends State<DonationInfoPage> {
                       .toList(),
                   SizedBox(height: 20.0),
                   ElevatedButton(
-                    onPressed: (_canUpdate && _newStatus != null)
+                    onPressed: (_canUpdate && _newStatus != null && (_newStatus != 'Complete' || (proofImageURL != null)))
                         ? () async {
-                            // Update donation status
-                            await donationProvider.updateDonationStatus(widget.donationId, _newStatus!);
-                            Navigator.pop(context, _newStatus); // Return new status to previous screen
+                            if (_newStatus == 'Complete' && proofImageURL == null) {
+                              setState(() {
+                                errorMessage = 'Please upload proof of legitimacy.';
+                              });
+                            } else if (_newStatus == 'Complete' && proofImageURL != null) {
+                              // Update donation status
+                              await donationProvider.completeDonationStatus(widget.donationId, _newStatus!, proofImageURL!);
+                              Navigator.pop(context, _newStatus); // Return new status to previous screen
+                            } else if (_newStatus != 'Complete' && proofImageURL == null) {
+                              // Update donation status
+                              await donationProvider.updateDonationStatus(widget.donationId, _newStatus!);
+                              Navigator.pop(context, _newStatus); // Return new status to previous screen
+                            }
                           }
                         : null,
                     child: Text('Update Status'),
@@ -102,6 +217,6 @@ class _DonationInfoPageState extends State<DonationInfoPage> {
           }
         },
       ),
-    );
+    ]));
   }
 }
