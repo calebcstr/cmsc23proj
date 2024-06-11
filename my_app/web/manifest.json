@@ -1,6 +1,6 @@
 {
-    "name": "week9_authentication",
-    "short_name": "week9_authentication",
+    "name": "cmsc23proj",
+    "short_name": "cmsc23proj",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
