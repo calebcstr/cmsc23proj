@@ -383,7 +383,7 @@ class _DonationPageState extends State<DonationPage> {
           textAlign: TextAlign.left,
         )),
         Expanded(
-          child: Text("${food? "Yex" : "No"}",
+          child: Text("${food? "Yes" : "No"}",
           style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
@@ -397,7 +397,7 @@ class _DonationPageState extends State<DonationPage> {
           textAlign: TextAlign.left,
         )),
         Expanded(
-          child: Text("${clothes? "Yex" : "No"}",
+          child: Text("${clothes? "Yes" : "No"}",
           style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
@@ -411,7 +411,7 @@ class _DonationPageState extends State<DonationPage> {
           textAlign: TextAlign.left,
         )),
         Expanded(
-          child: Text("${cash? "Yex" : "No"}",
+          child: Text("${cash? "Yes" : "No"}",
           style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
@@ -425,7 +425,7 @@ class _DonationPageState extends State<DonationPage> {
           textAlign: TextAlign.left,
         )),
         Expanded(
-          child: Text("${necessities? "Yex" : "No"}",
+          child: Text("${necessities? "Yes" : "No"}",
           style: const TextStyle(fontSize: 15.0,
           fontStyle: FontStyle.italic),
           textAlign: TextAlign.left,
